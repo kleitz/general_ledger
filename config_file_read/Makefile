@@ -13,13 +13,6 @@
 # Library and executable names
 LIBNAME=config_file_read
 OUT=lib$(LIBNAME).a
-SAMPLEOUT=sample
-
-# Install paths and header files to deploy
-INC_INSTALL_PREFIX=paulgrif
-INC_INSTALL_PATH=$(HOME)/include/$(INC_INSTALL_PREFIX)
-LIB_INSTALL_PATH=$(HOME)/lib/c
-INSTALLHEADERS=
 
 # Compiler and archiver executable names
 AR=ar
@@ -29,7 +22,8 @@ CC=gcc
 ARFLAGS=rcs
 
 # Compiler flags
-CFLAGS=-std=c11 -pedantic -Wall -Wextra
+CFLAGS=-std=c99 -pedantic -Wall -Wextra
+CFLAGS+=-I./.. -I./../string_helpers
 C_DEBUG_FLAGS=-ggdb -DDEBUG -DDEBUG_ALL
 C_RELEASE_FLAGS=-O3 -DNDEBUG
 
@@ -37,7 +31,7 @@ C_RELEASE_FLAGS=-O3 -DNDEBUG
 LDFLAGS=
 
 # Object code files
-OBJS=mainlib.o
+OBJS=map.o config_file_read.o
 
 # Source and clean files and globs
 SRCS=$(wildcard *.c *.h)
@@ -63,31 +57,6 @@ debug: main
 release: CFLAGS+=$(C_RELEASE_FLAGS)
 release: main
 
-# tests - builds unit tests
-.PHONY: tests
-tests: CFLAGS+=$(C_TEST_FLAGS)
-tests: LDFLAGS+=$(LD_TEST_FLAGS)
-tests: testmain
-
-# install - installs library and headers
-.PHONY: install
-install:
-	@if [ ! -d $(INC_INSTALL_PATH) ]; then \
-		mkdir $(INC_INSTALL_PATH); fi
-	@echo "Copying library to $(LIB_INSTALL_PATH)..."
-	@cp $(OUT) $(LIB_INSTALL_PATH)
-	@echo "Copying headers to $(INC_INSTALL_PATH)..."
-	@cp $(INSTALLHEADERS) $(INC_INSTALL_PATH)
-	@echo "Done."
-
-# sample - makes sample program
-.PHONY: sample
-sample: LDFLAGS+=-l$(LIBNAME)
-sample: main.o
-	@echo "Linking sample program..."
-	@$(CC) -o $(SAMPLEOUT) main.o $(LDFLAGS)
-	@echo "Done."
-
 # clean - removes ancilliary files from working directory
 .PHONY: clean
 clean:
@@ -103,16 +72,6 @@ docs:
 	@echo "Copying reference manual to docs..."
 	@cp latex/refman.pdf docs 
 	@echo "Done."
-
-# lint - runs splint with specified options
-.PHONY: lint
-lint:
-	@splint +unix-lib -unrecog $(SRCGLOB)
-
-# linteasy - runs splint with weak checking
-.PHONY: linteasy
-linteasy:
-	@splint -weak +unix-lib -unrecog $(SRCGLOB)
 
 # tags - makes tags file
 .PHONY: tags
@@ -134,15 +93,13 @@ main: $(OBJS)
 # Object files targets section
 # ============================
 
-# Sample program
-
-main.o: main.c
-	@echo "Compiling $<..."
-	@$(CC) $(CFLAGS) -c -o $@ $<
-
-
 # Object files for library
 
-mainlib.o: mainlib.c mainlib.h
+map.o: map.c map.h
 	@echo "Compiling $<..."
 	@$(CC) $(CFLAGS) -c -o $@ $<
+
+config_file_read.o: config_file_read.c map.h
+	@echo "Compiling $<..."
+	@$(CC) $(CFLAGS) -c -o $@ $<
+

@@ -18,14 +18,17 @@ CC=gcc
 
 # Compiler flags
 CFLAGS=-std=c11 -pedantic -Wall -Wextra
+CFLAGS+=-I/usr/include/mysql -DBIG_JOINS=1  -fno-strict-aliasing  -g
 C_DEBUG_FLAGS=-ggdb -DDEBUG -DDEBUG_ALL
 C_RELEASE_FLAGS=-O3 -DNDEBUG
 
 # Linker flags
-LDFLAGS=
+LDFLAGS=-Lconfig_file_read -lconfig_file_read
+LDFLAGS+=-Lstring_helpers -lstring_helpers
+LDFLAGS+=-L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -ldl
 
 # Object code files
-OBJS=main.o
+OBJS=main.o database.o gl_errors.o gl_logging.o
 
 # Source and clean files and globs
 SRCS=$(wildcard *.c *.h)
@@ -87,17 +90,38 @@ tags:
 # ==========================
 
 # Main executable
-main: $(OBJS)
+main: $(OBJS) string_helpers config_file_read
 	@echo "Building general_ledger..."
 	@$(CC) -o $(OUT) $(OBJS) $(LDFLAGS)
 	@echo "Done."
 
+# Sub libraries section
+.PHONY: string_helpers
+string_helpers:
+	@cd string_helpers; make;
+
+.PHONY: config_file_read
+config_file_read:
+	@cd config_file_read; make;
 
 # Object files targets section
 # ============================
 
 # Object files for executable
 
-main.o: main.c
+main.o: main.c database.h
 	@echo "Compiling $<..."
 	@$(CC) $(CFLAGS) -c -o $@ $<
+
+database.o: database.c database.h gl_errors.h gl_general.h
+	@echo "Compiling $<..."
+	@$(CC) $(CFLAGS) -c -o $@ $<
+
+gl_errors.o: gl_errors.c gl_errors.h
+	@echo "Compiling $<..."
+	@$(CC) $(CFLAGS) -c -o $@ $<
+
+gl_logging.o: gl_logging.c gl_logging.h
+	@echo "Compiling $<..."
+	@$(CC) $(CFLAGS) -c -o $@ $<
+
