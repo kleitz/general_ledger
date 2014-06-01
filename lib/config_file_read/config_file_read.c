@@ -12,9 +12,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gl_general.h"
-#include "string_functions.h"
-#include "map.h"
+#include "gl_general/gl_general.h"
+#include "stringhelp/string_functions.h"
+#include "datastruct/map.h"
 #include "config_file_read.h"
 
 /*!  Maximum size of buffers  */

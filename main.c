@@ -7,13 +7,16 @@
  * of the GNU General Public License. <http://www.gnu.org/licenses/>
  */
 
+#define _XOPEN_SOURCE 500
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gl_general.h"
-#include "database.h"
-#include "config_file_read/config_file_read.h"
+#include <string.h>
+#include "gl_general/gl_general.h"
+#include "database/database.h"
+#include "config.h"
 
+char * login(void);
 
 /*!
  * \brief       Main function.
@@ -23,36 +26,52 @@
 
 int main(void) {
     gl_set_logging(true);
-    //db_connect();
-    //db_close();
 
-    int status = config_file_read("test_conf.conf");
-    if ( status == CONFIG_FILE_NO_FILE ) {
-        gl_log_msg("Couldn't open config file.");
-    }
-    else if ( status == CONFIG_FILE_MALFORMED_FILE ) {
-        gl_log_msg("Badly formed config file.");
-    }
+    char * passwd = login();
 
-    config_file_print_all();
+    if ( passwd ) {
+        struct params * params = get_configuration(passwd);
+        if ( params ) {
+            db_connect(params->hostname, params->database,
+                       params->username, params->password);
+            db_close();
+            params_free(params);
+        }
+        else {
+            gl_log_msg("Couldn't get parameters.");
+            free(passwd);
+        }
 
-    const char * value;
-    if ( (value = config_file_value("database")) ) {
-        printf("Database: '%s'\n", value);
-    }
-    else {
-        printf("Database not specified in config file.\n");
-    }
-
-    if ( (value = config_file_value("hostname")) ) {
-        printf("Hostname: '%s'\n", value);
-    }
-    else {
-        printf("Hostname not specified in config file.\n");
+        //db_connect();
+        //db_close();
     }
 
-    config_file_free();
     gl_set_logging(false);
 
     return EXIT_SUCCESS;
+}
+
+char * login(void) {
+    char buffer[30] = {0};
+    char * passwd = NULL;
+
+    printf("Enter password (*WILL BE VISIBLE*): ");
+    fflush(stdout);
+
+    if ( fgets(buffer, 30, stdin) ) {
+        size_t length = strlen(buffer);
+        if ( length && buffer[length - 1] == '\n' ) {
+            buffer[length - 1] = '\0';
+        }
+
+        passwd = strdup(buffer);
+        if ( !passwd ) {
+            gl_log_msg("Couldn't allocate memory for password.");
+        }
+    }
+    else {
+        gl_log_msg("Couldn't get password.");
+    }
+
+    return passwd;
 }

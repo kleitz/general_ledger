@@ -1,7 +1,6 @@
 # Genuine options
 
  hostname   = localhost
- username = gl_admin
 
    database  =      gl_testbed    
 

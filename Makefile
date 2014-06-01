@@ -10,32 +10,29 @@
 # Variables section
 # =================
 
-# Executable names
-OUT=general_ledger
+# Files
+program      := general_ledger
+sources      := $(wildcard *.c)
+libraries    :=
+main_objects := $(subst .c,.o,$(sources))
+objects       = $(subst .c,.o,$(sources))
+depends       = $(subst .c,.d,$(sources))
 
-# Compiler executable name
-CC=gcc
+# Compile options
+database     := mysql
 
 # Compiler flags
-CFLAGS=-std=c11 -pedantic -Wall -Wextra
-CFLAGS+=-I/usr/include/mysql -DBIG_JOINS=1  -fno-strict-aliasing  -g
-C_DEBUG_FLAGS=-ggdb -DDEBUG -DDEBUG_ALL
-C_RELEASE_FLAGS=-O3 -DNDEBUG
+CFLAGS  = -std=c99 -pedantic -Wall -Wextra
+CFLAGS += -I/usr/include/mysql -DBIG_JOINS=1 -fno-strict-aliasing -g
+CFLAGS += -Ilib
+C_DEBUG_FLAGS   := -ggdb -DDEBUG -DDEBUG_ALL
+C_RELEASE_FLAGS := -O3 -DNDEBUG
 
 # Linker flags
-LDFLAGS=-Lconfig_file_read -lconfig_file_read
-LDFLAGS+=-Lstring_helpers -lstring_helpers
-LDFLAGS+=-L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -ldl
+LDFLAGS := -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -ldl
 
-# Object code files
-OBJS=main.o database.o gl_errors.o gl_logging.o
-
-# Source and clean files and globs
-SRCS=$(wildcard *.c *.h)
-
-SRCGLOB=*.c
-
-CLNGLOB=$(OUT) $(SAMPLEOUT)
+# Clean files and globs
+CLNGLOB=$(program) $(objects) $(libraries) $(depends)
 CLNGLOB+=*~ *.o *.gcov *.out *.gcda *.gcno
 
 
@@ -90,38 +87,29 @@ tags:
 # ==========================
 
 # Main executable
-main: $(OBJS) string_helpers config_file_read
+.PHONY: main
+main: $(program)
+
+include lib/database/$(database)/module.mk
+include lib/gl_general/module.mk
+include lib/config_file_read/module.mk
+include lib/stringhelp/module.mk
+include lib/datastruct/module.mk
+
+$(program):	$(main_objects) $(libraries)
 	@echo "Building general_ledger..."
-	@$(CC) -o $(OUT) $(OBJS) $(LDFLAGS)
+	$(CC) -o $(program) $(main_objects) $(libraries) $(LDFLAGS)
 	@echo "Done."
 
-# Sub libraries section
-.PHONY: string_helpers
-string_helpers:
-	@cd string_helpers; make;
 
-.PHONY: config_file_read
-config_file_read:
-	@cd config_file_read; make;
+# Dependencies
+# ============
 
-# Object files targets section
-# ============================
+-include $(depends)
 
-# Object files for executable
-
-main.o: main.c database.h
-	@echo "Compiling $<..."
-	@$(CC) $(CFLAGS) -c -o $@ $<
-
-database.o: database.c database.h gl_errors.h gl_general.h
-	@echo "Compiling $<..."
-	@$(CC) $(CFLAGS) -c -o $@ $<
-
-gl_errors.o: gl_errors.c gl_errors.h
-	@echo "Compiling $<..."
-	@$(CC) $(CFLAGS) -c -o $@ $<
-
-gl_logging.o: gl_logging.c gl_logging.h
-	@echo "Compiling $<..."
-	@$(CC) $(CFLAGS) -c -o $@ $<
+%.d: %.c
+	@echo "Building dependencies for $<..."
+	@$(CC) -M $(CFLAGS) $< > $@.tmp; \
+		sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.tmp > $@; \
+		rm -f $@.tmp
 

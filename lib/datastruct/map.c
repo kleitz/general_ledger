@@ -175,7 +175,7 @@ void map_print_all(hash_map map, FILE * outfile) {
     for ( size_t idx = 0; idx < map->hash_size; ++idx ) {
         struct kv_pair_node * current_node = map->lists[idx];
         while ( current_node ) {
-            fprintf(outfile, "%3d - %s : %s\n", num++,
+            fprintf(outfile, "%3d (%3zu) - %s : %s\n", num++, idx,
                     current_node->key, current_node->value);
             current_node = current_node->next;
         }
