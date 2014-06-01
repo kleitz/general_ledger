@@ -10,6 +10,9 @@ latex
 *.lo
 *.o
 
+# Dependencies files
+*.d
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
