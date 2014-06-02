@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include "gl_general/gl_general.h"
 #include "stringhelp/string_functions.h"
-#include "datastruct/map.h"
+#include "datastruct/ds_map.h"
 #include "config_file_read.h"
 
 /*!  Maximum size of buffers  */
@@ -24,7 +24,7 @@
 #define CONFIG_MAP_SIZE 100
 
 /*!  File scope variable for the hash map  */
-static hash_map config_map = NULL;
+static ds_map config_map = NULL;
 
 int config_file_read(const char * filename) {
     FILE * config_file = fopen(filename, "r");
@@ -34,7 +34,7 @@ int config_file_read(const char * filename) {
     }
 
     int retval = CONFIG_FILE_OK;
-    config_map = map_init(CONFIG_MAP_SIZE);
+    config_map = ds_map_init(CONFIG_MAP_SIZE);
 
     char buffer[MAX_BUFFER_SIZE];    
     while ( fgets(buffer, sizeof buffer, config_file) ) {
@@ -65,7 +65,7 @@ int config_file_read(const char * filename) {
 
         trim(key);
         trim(value);
-        map_insert(config_map, key, value);
+        ds_map_insert(config_map, key, value);
     }
 
     fclose(config_file);
@@ -74,7 +74,7 @@ int config_file_read(const char * filename) {
 
 const char * config_file_value(const char * key) {
     if ( config_map ) {
-        return map_get_value(config_map, key);
+        return ds_map_get_value(config_map, key);
     }
     else {
         return NULL;
@@ -83,14 +83,14 @@ const char * config_file_value(const char * key) {
 
 void config_file_free(void) {
     if ( config_map ) {
-        map_destroy(config_map);
+        ds_map_destroy(config_map);
         config_map = NULL;
     }
 }
 
 void config_file_print_all(void) {
     if ( config_map ) {
-        map_print_all(config_map, stdout);
+        ds_map_print_all(config_map, stdout);
     }
 }
 
