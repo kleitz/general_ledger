@@ -44,10 +44,10 @@ void gl_set_logging(const bool status) {
         }
 
         logging_on = true;
-        gl_log_msg("Starting to log...");
+        /* gl_log_msg("Starting to log..."); */
     }
     else if ( !status && logging_on ) {
-        gl_log_msg("Ending logging...");
+        /* gl_log_msg("Ending logging..."); */
         if ( log_file != stderr ) {
             fclose(log_file);
         }
