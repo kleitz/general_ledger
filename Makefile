@@ -90,6 +90,7 @@ tags:
 .PHONY: main
 main: $(program)
 
+include lib/database/module.mk
 include lib/database/$(database)/module.mk
 include lib/gl_general/module.mk
 include lib/config_file_read/module.mk
