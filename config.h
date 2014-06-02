@@ -10,6 +10,7 @@ struct params {
     char * password;
     bool help;
     bool create;
+    bool list_users;
 };
 
 int get_configuration(struct params * params);

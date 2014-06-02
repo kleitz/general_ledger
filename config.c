@@ -85,13 +85,16 @@ int get_cmdline_options(int argc, char **argv, struct params *params) {
     int opt;
     int ret_val = 0;
 
-    while ((opt = getopt(argc, argv, "ch")) != -1) {
+    while ((opt = getopt(argc, argv, "chu")) != -1) {
         switch (opt) {
         case 'c':
             params->create = true;
             break;
         case 'h':
             params->help = true;
+            break;
+        case 'u':
+            params->list_users = true;
             break;
         default:               /* '?' */
             ret_val = -1;
