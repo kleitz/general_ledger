@@ -11,7 +11,10 @@ struct params {
     bool help;
     bool version;
     bool create;
+    bool delete_data;
+    bool sample;
     bool list_users;
+    bool list_entities;
 };
 
 int get_configuration(struct params * params);

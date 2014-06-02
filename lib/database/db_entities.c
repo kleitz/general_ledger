@@ -12,22 +12,11 @@ int db_drop_entities_table(void) {
     return db_execute_query(db_drop_entities_table_sql());
 }
 
-/*
-int db_add_user(const char * first_name, const char * last_name) {
-    char * query = db_add_user_sql(first_name, last_name);
-    int status = db_execute_query(query);
-    free(query);
-    return status;
+char * db_list_entities_report(void) {
+    const char * query = db_list_entities_report_sql();
+    ds_result_set results = db_create_result_set_from_query(query);
+    char * report = ds_result_set_get_text_report(results);
+    ds_result_set_destroy(results);
+    return report;
 }
-
-int db_add_sample_users(void) {
-    db_add_user("John", "Doe");
-    db_add_user("Phillipa", "Nurfler");
-    db_add_user("Algernon", "Fox");
-    db_add_user("Jenny", "Minx");
-
-    return 0;
-}
-
-*/
 

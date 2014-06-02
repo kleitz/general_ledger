@@ -20,7 +20,11 @@ struct params *params_init(void) {
         new_params->password = NULL;
         new_params->help = false;
         new_params->create = false;
+        new_params->delete_data = false;
+        new_params->sample = false;
         new_params->version = false;
+        new_params->list_users = false;
+        new_params->list_entities = false;
     } else {
         gl_log_msg("Couldn't allocate memory for parameters.");
     }
@@ -90,17 +94,25 @@ int get_cmdline_options(int argc, char **argv, struct params *params) {
         CMDLINE_HELP = 1,
         CMDLINE_VERSION,
         CMDLINE_CREATE,
-        CMDLINE_LISTUSERS
+        CMDLINE_DELETE,
+        CMDLINE_SAMPLE,
+        CMDLINE_LISTUSERS,
+        CMDLINE_LISTENTITIES,
     };
 
     static struct option long_options[] = {
         {"help", no_argument, NULL, CMDLINE_HELP},
         {"version", no_argument, NULL, CMDLINE_VERSION},
         {"create", no_argument, NULL, CMDLINE_CREATE},
-        {"listusers", no_argument, NULL, CMDLINE_LISTUSERS}
+        {"delete", no_argument, NULL, CMDLINE_DELETE},
+        {"loadsample", no_argument, NULL, CMDLINE_SAMPLE},
+        {"listusers", no_argument, NULL, CMDLINE_LISTUSERS},
+        {"listentities", no_argument, NULL, CMDLINE_LISTENTITIES},
+        {NULL, 0, NULL, 0}
     };
 
-    while ((opt = getopt_long(argc, argv, "hv", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hvcdsu",
+                              long_options, NULL)) != -1) {
         switch ( opt ) {
             case 'h':
             case CMDLINE_HELP:
@@ -112,12 +124,29 @@ int get_cmdline_options(int argc, char **argv, struct params *params) {
                 params->version = true;
                 break;
 
+            case 'c':
             case CMDLINE_CREATE:
                 params->create = true;
                 break;
 
+            case 'd':
+            case CMDLINE_DELETE:
+                params->delete_data = true;
+                break;
+
+            case 's':
+            case CMDLINE_SAMPLE:
+                params->sample = true;
+                break;
+
+            case 'u':
             case CMDLINE_LISTUSERS:
                 params->list_users = true;
+                break;
+
+            case 'e':
+            case CMDLINE_LISTENTITIES:
+                params->list_entities = true;
                 break;
 
             default:

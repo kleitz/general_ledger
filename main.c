@@ -49,7 +49,9 @@ int main(int argc, char ** argv) {
     else if ( params->version ) {
         print_version_message(argv[0]);
     }
-    else if ( params->create || params->list_users ) {
+    else if ( params->create || params->list_users ||
+              params->delete_data || params->sample ||
+              params->list_entities ) {
         if ( get_configuration(params) ) {
             gl_log_msg("Couldn't get parameters.");
         }
@@ -59,13 +61,24 @@ int main(int argc, char ** argv) {
                 db_connect(params->hostname, params->database,
                            params->username, params->password);
 
-                if ( params->list_users ) {
+                if ( params->create ) {
+                    db_create_database_structure();
+                }
+                else if ( params->delete_data ) {
+                    db_delete_database_structure();
+                }
+                else if ( params->sample ) {
+                    db_load_sample_data();
+                }
+                else if ( params->list_users ) {
                     char * report = db_list_users_report();
                     printf("%s", report);
                     free(report);
                 }
-                else if ( params->create ) {
-                    db_create_database_structure();
+                else if ( params->list_entities ) {
+                    char * report = db_list_entities_report();
+                    printf("%s", report);
+                    free(report);
                 }
 
                 db_close();
@@ -117,10 +130,13 @@ void print_usage_message(char * progname) {
 void print_help_message(char * progname) {
     print_usage_message(progname);
     printf("Options:\n");
-    printf("  --help        Display this information\n");
-    printf("  --version     Display version information\n");
-    printf("  --create      Create database structure\n");
-    printf("  --listusers   Show a list of users\n");
+    printf("  --help            Display this information\n");
+    printf("  --version         Display version information\n");
+    printf("  --create          Create database structure\n");
+    printf("  --delete          Delete database structure\n");
+    printf("  --loadsample      Load sample data\n");
+    printf("  --listusers       Show a list of users\n");
+    printf("  --listentities    Show a list of entities\n");
 }
 
 void print_version_message(char * progname) {

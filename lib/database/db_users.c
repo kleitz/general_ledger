@@ -22,21 +22,7 @@ int db_add_user(const char * first_name, const char * last_name) {
 }
 
 int db_add_sample_users(void) {
-    int ret_val = 0;
-    ds_result_set users = delim_file_read("sample_data/users");
-    ds_result_set_seek_start(users);
-    char * query;
-    while ( (query = ds_result_set_get_next_insert_query(users, "users")) ) {
-        ret_val = db_execute_query(query);
-        free(query);
-        if ( ret_val ) {
-            ds_result_set_destroy(users);
-            return ret_val;
-        }
-    }
-
-    ds_result_set_destroy(users);
-    return 0;
+    return db_add_sample_data("users", "sample_data/users");
 }
 
 char * db_list_users_report(void) {
@@ -46,3 +32,4 @@ char * db_list_users_report(void) {
     ds_result_set_destroy(results);
     return report;
 }
+

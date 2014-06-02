@@ -3,10 +3,7 @@
 
 int db_create_entities_table(void);
 int db_drop_entities_table(void);
-/*
-int db_add_user(const char * first_name, const char * last_name);
-int db_add_sample_users(void);
-*/
+char * db_list_entities_report(void);
 
 #endif      /*  PG_GENERAL_LEDGER_DB_ENTITIES_H  */
 

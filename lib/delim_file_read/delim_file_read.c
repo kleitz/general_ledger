@@ -71,7 +71,6 @@ ds_result_set delim_file_read(const char * filename) {
     ds_list headers = delim_file_line_read(delim_file, ':');
     assert(headers);
     size_t num_fields = ds_list_length(headers);
-    printf("num_fields is %zu\n", num_fields);
 
     ds_result_set set = ds_result_set_create(num_fields);
     if ( !set ) {
@@ -87,18 +86,10 @@ ds_result_set delim_file_read(const char * filename) {
             ds_result_set_destroy(set);
             return NULL;
         }
-
-        ds_list_seek_start(row);
-        char * fld;
-        while ( (fld = ds_list_get_next_data(row)) ) {
-            printf("[%s] ", fld);
-        }
-        printf("\n");
         ds_result_set_add_record(set, row);
     }
 
     fclose(delim_file);
-    printf("Returning from delim_file_read()...\n");
     return set;
 }
 
