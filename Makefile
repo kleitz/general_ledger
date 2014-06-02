@@ -94,6 +94,7 @@ include lib/database/module.mk
 include lib/database/$(database)/module.mk
 include lib/gl_general/module.mk
 include lib/config_file_read/module.mk
+include lib/delim_file_read/module.mk
 include lib/stringhelp/module.mk
 include lib/datastruct/module.mk
 
