@@ -55,6 +55,13 @@ static void ds_result_set_update_field_lengths(struct ds_result_set * set,
 static size_t ds_result_set_get_record_line_length(struct ds_result_set * set);
 
 /*!
+ * \brief           Returns the sum total maximum length of all fields.
+ * \param set       The results set.
+ * \returns         The sum total maximum length of all fields.
+ */
+static size_t ds_result_set_get_total_field_length(struct ds_result_set * set);
+
+/*!
  * \brief           Returns a formatted text line of field headers.
  * \details         This function is suitable for building a text report.
  * \param set       The result set.
@@ -92,6 +99,16 @@ static char * ds_result_set_get_next_line(ds_result_set set);
  */
 static char * ds_result_set_get_line_from_record(struct ds_result_set * set,
                                                  struct ds_list * record);
+
+/*!
+ * \brief           Creates a comma-separated text line from a record.
+ * \param set       The results set.
+ * \param record    The record.
+ * \returns         The line, or `NULL` on failure.
+ */
+static char * ds_result_set_get_cs_line_from_record(struct ds_result_set * set,
+                                                 struct ds_list * record,
+                                                 const bool squote);
 
 /*!
  * \brief           Adds a line to a report.
@@ -155,6 +172,11 @@ size_t ds_result_set_num_fields(struct ds_result_set * set) {
     return set->num_fields;
 }
 
+size_t ds_result_set_num_records(struct ds_result_set * set) {
+    assert(set);
+    return ds_list_length(set->records);
+}
+
 void ds_result_set_set_headers(struct ds_result_set * set,
                                struct ds_list * headers) {
     assert(set && headers);
@@ -168,8 +190,8 @@ char * ds_result_set_get_text_report(struct ds_result_set * set) {
     assert(set);
 
     size_t line_length = ds_result_set_get_record_line_length(set);
-    size_t num_fields = ds_result_set_num_fields(set);
-    size_t total_rows = num_fields + 3 + 1;
+    size_t num_records = ds_result_set_num_records(set);
+    size_t total_rows = num_records + 3 + 1;
     size_t report_size = line_length * total_rows + 1;
 
     char * report = malloc(report_size);
@@ -220,6 +242,60 @@ struct ds_list * ds_result_set_get_next_data(struct ds_result_set * set) {
 struct ds_list * ds_result_set_get_prev_data(struct ds_result_set * set) {
     assert(set);
     return ds_list_get_prev_data(set->records);
+}
+
+char * ds_result_set_get_next_insert_query(struct ds_result_set * set,
+                                           const char * table_name) {
+    static char basic_query[] = "INSERT INTO %s (%s) VALUES (%s)";
+    ds_list record = ds_result_set_get_next_data(set);
+    if ( !record ) {
+        return NULL;
+    }
+
+    char * headers = ds_result_set_get_cs_line_from_record(set,
+            set->headers, false);
+    char * values = ds_result_set_get_cs_line_from_record(set,
+            record, true);
+    size_t query_len = sizeof(basic_query) + strlen(table_name) +
+                       strlen(headers) + strlen(values);
+
+    char * line = malloc(query_len);
+    if ( !line ) {
+        return NULL;
+    }
+
+    sprintf(line, basic_query, table_name, headers, values);
+    free(headers);
+    free(values);
+
+    return line;
+}
+
+static char * ds_result_set_get_cs_line_from_record(struct ds_result_set * set,
+                                                 struct ds_list * record,
+                                                 const bool squote) {
+    assert(set);
+
+    size_t line_len = ds_result_set_get_total_field_length(set);
+    line_len += ds_result_set_num_fields(set) * 3;
+    char * line = calloc(line_len, 1);
+    if ( !line ) {
+        return NULL;
+    }
+
+    ds_list_seek_start(record);
+    char * line_ptr = line;
+    for ( size_t i = 0; i < set->num_fields; ++i ) {
+        char * field = ds_list_get_next_data(record);
+        char * comma = (i == 0) ? "" : ",";
+        char * quote = (squote) ? "'" : "";
+        sprintf(line_ptr, "%s%s%s%s", comma, quote, field, quote);
+        line_ptr += strlen(field) +
+                    ((i == 0) ? 0 : 1) +
+                    (squote ? 2 : 0);
+    }
+
+    return line;
 }
 
 static char * ds_result_set_get_line_from_record(struct ds_result_set * set,
@@ -278,14 +354,21 @@ ds_result_set_get_record_line_length(struct ds_result_set * set) {
     assert(set);
 
     size_t record_line_length = null_character_width + separator_width;
-
-    for ( size_t i = 0; i < set->num_fields; ++i ) {
-        record_line_length += set->field_lengths[i] +
-                              separator_width +
-                              padding_width * 2;
-    }
+    record_line_length += ds_result_set_get_total_field_length(set);
+    record_line_length += set->num_fields *
+                          (separator_width + padding_width * 2);
 
     return record_line_length;
+}
+
+static size_t
+ds_result_set_get_total_field_length(struct ds_result_set * set) {
+    assert(set);
+    size_t fields_length = 0;
+    for ( size_t i = 0; i < set->num_fields; ++i ) {
+        fields_length += set->field_lengths[i];
+    }
+    return fields_length;
 }
 
 static char * ds_result_set_get_headers_line(struct ds_result_set * set) {

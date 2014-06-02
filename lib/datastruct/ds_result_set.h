@@ -50,6 +50,13 @@ ds_record ds_result_set_add_record(ds_result_set set, ds_list record);
 size_t ds_result_set_num_fields(ds_result_set set);
 
 /*!
+ * \brief           Returns the number of records in a result set.
+ * \param set       The result set.
+ * \returns         The number of records in the result set.
+ */
+size_t ds_result_set_num_records(ds_result_set set);
+
+/*!
  * \brief           Sets the record headers in a record set.
  * \param set       The result set.
  * \param headers   The headers, in the form of a `ds_list` of strings.
@@ -67,6 +74,14 @@ void ds_result_set_set_headers(ds_result_set set, ds_list headers);
  */
 char * ds_result_set_get_text_report(ds_result_set set);
 
+/*!
+ * \brief               Gets the next SQL INSERT query.
+ * \param set           The set.
+ * \param table_name    The table name into which to insert.
+ * \returns             The query. Caller is responsible for `free()`ing.
+ */
+char * ds_result_set_get_next_insert_query(ds_result_set set,
+                                           const char * table_name);
 /*!
  * \brief           Sets the current record to the first record.
  * \param set       The result set.

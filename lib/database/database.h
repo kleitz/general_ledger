@@ -1,6 +1,8 @@
 #ifndef PG_GENERAL_LEDGER_DATABASE_H
 #define PG_GENERAL_LEDGER_DATABASE_H
 
+#include "database/db_users.h"
+#include "database/db_entities.h"
 #include "datastruct/ds_result_set.h"
 
 void db_connect(const char * host, const char * database,

@@ -17,11 +17,13 @@
 #include "config.h"
 #include "datastruct/ds_list.h"
 #include "datastruct/ds_result_set.h"
+#include "delim_file_read/delim_file_read.h"
 
 char * login(void);
 void print_usage_message(char * progname);
 void print_version_message(char * progname);
 void print_help_message(char * progname);
+void test_functionality(void);
 
 /*!
  * \brief       Main function.
@@ -30,6 +32,9 @@ void print_help_message(char * progname);
  */
 
 int main(int argc, char ** argv) {
+    //test_functionality();
+    //return 0;
+
     gl_set_logging(true);
 
     struct params * params = params_init();
@@ -55,17 +60,9 @@ int main(int argc, char ** argv) {
                            params->username, params->password);
 
                 if ( params->list_users ) {
-                    char * query = "SELECT id AS 'User ID', first_name as "
-                       "'First Name', last_name as 'Last Name',"
-                       "enabled as 'Enabled?' FROM users";
-                    ds_result_set result =
-                        db_create_result_set_from_query(query);
-
-                    printf("List of users:\n");
-                    char * report = ds_result_set_get_text_report(result);
+                    char * report = db_list_users_report();
                     printf("%s", report);
                     free(report);
-                    ds_result_set_destroy(result);
                 }
                 else if ( params->create ) {
                     db_create_database_structure();
@@ -136,3 +133,19 @@ void print_version_message(char * progname) {
     (void)progname;
 }
 
+void test_functionality(void) {
+    ds_result_set set = delim_file_read("sample_data/users");
+
+    char * report = ds_result_set_get_text_report(set);
+    printf("%s\n", report);
+    free(report);
+
+    ds_result_set_seek_start(set);
+    char * query;
+    while ( (query = ds_result_set_get_next_insert_query(set, "users")) ) {
+        printf("%s\n", query);
+        free(query);
+    }
+
+    ds_result_set_destroy(set);
+}
