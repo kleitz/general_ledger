@@ -20,6 +20,7 @@ struct params *params_init(void) {
         new_params->password = NULL;
         new_params->help = false;
         new_params->create = false;
+        new_params->version = false;
     } else {
         gl_log_msg("Couldn't allocate memory for parameters.");
     }
@@ -45,10 +46,9 @@ static char *get_param_from_config(char *key) {
         new_param = strdup(value);
         if (!new_param) {
             gl_log_msg("Couldn't allocate memory for %s name.", key);
-        } else {
-            gl_log_msg("Name of %s from config file: %s", key, new_param);
-        }
-    } else {
+        };
+    }
+    else {
         gl_log_msg("Name of %s not specified in configuration file.", key);
     }
 
