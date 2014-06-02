@@ -9,6 +9,7 @@ struct params {
     char * username;
     char * password;
     bool help;
+    bool version;
     bool create;
     bool list_users;
 };

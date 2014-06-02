@@ -20,6 +20,7 @@
 
 char * login(void);
 void print_usage_message(char * progname);
+void print_version_message(char * progname);
 void print_help_message(char * progname);
 
 /*!
@@ -29,11 +30,6 @@ void print_help_message(char * progname);
  */
 
 int main(int argc, char ** argv) {
-
-    /*
-    test_data_structures();
-    return EXIT_SUCCESS;
-*/
     gl_set_logging(true);
 
     struct params * params = params_init();
@@ -44,6 +40,9 @@ int main(int argc, char ** argv) {
     }
     else if ( params->help ) {
         print_help_message(argv[0]);
+    }
+    else if ( params->version ) {
+        print_version_message(argv[0]);
     }
     else if ( params->create || params->list_users ) {
         if ( get_configuration(params) ) {
@@ -115,13 +114,25 @@ char * login(void) {
 }
 
 void print_usage_message(char * progname) {
-    fprintf(stderr, "Usage: %s [-h] [-c]\n", progname);
+    fprintf(stderr, "Usage: %s [options]\n", progname);
 }
 
 void print_help_message(char * progname) {
     print_usage_message(progname);
     printf("Options:\n");
-    printf("  -h            Show this help message.\n");
-    printf("  -c            Create database structure.\n");
+    printf("  --help        Display this information\n");
+    printf("  --version     Display version information\n");
+    printf("  --create      Create database structure\n");
+    printf("  --listusers   Show a list of users\n");
+}
+
+void print_version_message(char * progname) {
+    printf("general_ledger (working title) 0.1 (experimental)\n");
+    printf("Copyright (C) 2014 Paul Griffiths\n");
+    printf("This is free software; see the source for copying conditions.  ");
+    printf("There is NO\n");
+    printf("warranty; not even for MERCHANTABILITY or FITNESS FOR A ");
+    printf("PARTICULAR PURPOSE.\n");
+    (void)progname;
 }
 

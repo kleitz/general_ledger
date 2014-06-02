@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 #include "config.h"
 #include "config_file_read/config_file_read.h"
 #include "gl_general/gl_general.h"
@@ -85,21 +86,46 @@ int get_cmdline_options(int argc, char **argv, struct params *params) {
     int opt;
     int ret_val = 0;
 
-    while ((opt = getopt(argc, argv, "chu")) != -1) {
-        switch (opt) {
-        case 'c':
-            params->create = true;
-            break;
-        case 'h':
-            params->help = true;
-            break;
-        case 'u':
-            params->list_users = true;
-            break;
-        default:               /* '?' */
-            ret_val = -1;
+    enum opts {
+        CMDLINE_HELP = 1,
+        CMDLINE_VERSION,
+        CMDLINE_CREATE,
+        CMDLINE_LISTUSERS
+    };
+
+    static struct option long_options[] = {
+        {"help", no_argument, NULL, CMDLINE_HELP},
+        {"version", no_argument, NULL, CMDLINE_VERSION},
+        {"create", no_argument, NULL, CMDLINE_CREATE},
+        {"listusers", no_argument, NULL, CMDLINE_LISTUSERS}
+    };
+
+    while ((opt = getopt_long(argc, argv, "hv", long_options, NULL)) != -1) {
+        switch ( opt ) {
+            case 'h':
+            case CMDLINE_HELP:
+                params->help = true;
+                break;
+
+            case 'v':
+            case CMDLINE_VERSION:
+                params->version = true;
+                break;
+
+            case CMDLINE_CREATE:
+                params->create = true;
+                break;
+
+            case CMDLINE_LISTUSERS:
+                params->list_users = true;
+                break;
+
+            default:
+                ret_val = -1;
         }
+
     }
 
     return ret_val;
 }
+
