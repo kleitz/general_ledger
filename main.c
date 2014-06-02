@@ -15,6 +15,8 @@
 #include "gl_general/gl_general.h"
 #include "database/database.h"
 #include "config.h"
+#include "datastruct/ds_list.h"
+#include "datastruct/ds_result_set.h"
 
 char * login(void);
 void print_usage_message(char * progname);
@@ -27,6 +29,11 @@ void print_help_message(char * progname);
  */
 
 int main(int argc, char ** argv) {
+
+    /*
+    test_data_structures();
+    return EXIT_SUCCESS;
+*/
     gl_set_logging(true);
 
     struct params * params = params_init();
@@ -38,7 +45,7 @@ int main(int argc, char ** argv) {
     else if ( params->help ) {
         print_help_message(argv[0]);
     }
-    else if ( params->create ) {
+    else if ( params->create || params->list_users ) {
         if ( get_configuration(params) ) {
             gl_log_msg("Couldn't get parameters.");
         }
@@ -47,6 +54,24 @@ int main(int argc, char ** argv) {
             if ( params->password ) {
                 db_connect(params->hostname, params->database,
                            params->username, params->password);
+
+                if ( params->list_users ) {
+                    char * query = "SELECT id AS 'User ID', first_name as "
+                       "'First Name', last_name as 'Last Name',"
+                       "enabled as 'Enabled?' FROM users";
+                    ds_result_set result =
+                        db_create_result_set_from_query(query);
+
+                    printf("List of users:\n");
+                    char * report = ds_result_set_get_text_report(result);
+                    printf("%s", report);
+                    free(report);
+                    ds_result_set_destroy(result);
+                }
+                else if ( params->create ) {
+                    db_create_database_structure();
+                }
+
                 db_close();
             }
             else {
