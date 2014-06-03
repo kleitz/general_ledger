@@ -209,6 +209,18 @@ struct ds_str * ds_str_trunc(struct ds_str * str, const size_t length) {
     return str;
 }
 
+unsigned long ds_str_hash(struct ds_str * str) {
+    unsigned long hash = 5381;
+    int c;
+    const char * c_str = ds_str_cstr(str);
+
+    while ( (c = *c_str++) ) {
+        hash = ((hash << 5) + hash) + c;
+    }
+
+    return hash;
+}
+
 static char * duplicate_cstr(const char * src, size_t * length) {
     assert(src);
 

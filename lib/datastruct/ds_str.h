@@ -104,5 +104,13 @@ ds_str ds_str_concat_cstr(struct ds_str * dst, const char * src);
  */
 ds_str ds_str_trunc(ds_str str, const size_t length);
 
+/*!
+ * \brief           Calculates a hash of a string.
+ * \details         Uses Dan Bernstein's djb2 algorithm.
+ * \param str       The string.
+ * \returns         The hash value
+ */
+unsigned long ds_str_hash(struct ds_str * str);
+
 #endif      /*  PG_GENERAL_LEDGER_DS_STR_H  */
 
