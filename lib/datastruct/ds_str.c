@@ -221,6 +221,10 @@ unsigned long ds_str_hash(struct ds_str * str) {
     return hash;
 }
 
+int ds_str_compare(ds_str s1, ds_str s2) {
+    return strcmp(ds_str_cstr(s1), ds_str_cstr(s2));
+}
+
 static char * duplicate_cstr(const char * src, size_t * length) {
     assert(src);
 

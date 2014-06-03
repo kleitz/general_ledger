@@ -112,5 +112,14 @@ ds_str ds_str_trunc(ds_str str, const size_t length);
  */
 unsigned long ds_str_hash(struct ds_str * str);
 
+/*!
+ * \brief           Compares two strings.
+ * \param s1        The first string.
+ * \param s2        The second string.
+ * \returns         Less than, equal to, or greater than zero if s1 is found,
+ * respectively, to be less than, equal to, or greater than s2.
+ */
+int ds_str_compare(ds_str s1, ds_str s2);
+
 #endif      /*  PG_GENERAL_LEDGER_DS_STR_H  */
 
