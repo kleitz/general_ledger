@@ -17,6 +17,7 @@
 #include "config.h"
 #include "datastruct/ds_list.h"
 #include "datastruct/ds_result_set.h"
+#include "datastruct/ds_str.h"
 #include "delim_file_read/delim_file_read.h"
 
 char * login(void);
@@ -150,18 +151,28 @@ void print_version_message(char * progname) {
 }
 
 void test_functionality(void) {
-    ds_result_set set = delim_file_read("sample_data/users");
+    ds_str mystr1 = ds_str_create("Hello, world!");
+    ds_str mystr2 = ds_str_create(" Another string!");
+    ds_str mystr3 = ds_str_dup(mystr1);
 
-    char * report = ds_result_set_get_text_report(set);
-    printf("%s\n", report);
-    free(report);
+    printf("[%s] (%zu)\n", ds_str_cstr(mystr1), ds_str_length(mystr1));
+    printf("[%s] (%zu)\n", ds_str_cstr(mystr2), ds_str_length(mystr2));
+    printf("[%s] (%zu)\n", ds_str_cstr(mystr3), ds_str_length(mystr3));
 
-    ds_result_set_seek_start(set);
-    char * query;
-    while ( (query = ds_result_set_get_next_insert_query(set, "users")) ) {
-        printf("%s\n", query);
-        free(query);
-    }
+    ds_str_concat(mystr1, mystr2);
 
-    ds_result_set_destroy(set);
+    printf("[%s] (%zu)\n", ds_str_cstr(mystr1), ds_str_length(mystr1));
+
+    ds_str mystr4 = ds_str_create_sprintf("%d, %.2f, %s", 4, 5.432, "Hey!");
+
+    printf("[%s] (%zu)\n", ds_str_cstr(mystr4), ds_str_length(mystr4));
+
+    ds_str_trunc(mystr1, 6);
+
+    printf("[%s] (%zu)\n", ds_str_cstr(mystr1), ds_str_length(mystr1));
+
+    ds_str_destroy(mystr1);
+    ds_str_destroy(mystr2);
+    ds_str_destroy(mystr3);
+    ds_str_destroy(mystr4);
 }
