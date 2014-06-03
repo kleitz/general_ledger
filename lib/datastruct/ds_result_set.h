@@ -14,9 +14,6 @@
 /*!  Typedef for opaque result set data type  */
 typedef struct ds_result_set * ds_result_set;
 
-/*!  Typedef for opaque record data type  */
-typedef struct ds_list * ds_record;
-
 /*!
  * \brief               Creates a new result set.
  * \param num_fields    The non-zero number of fields in the result set.
@@ -40,7 +37,7 @@ void ds_result_set_destroy(ds_result_set set);
  * \returns         A pointer to the new record (i.e. it returns the
  * second parameter) or `NULL` on failure.
  */
-ds_record ds_result_set_add_record(ds_result_set set, ds_list record);
+ds_list ds_result_set_add_record(ds_result_set set, ds_list record);
 
 /*!
  * \brief           Returns the number of fields in a result set.
@@ -103,7 +100,7 @@ void ds_result_set_seek_end(ds_result_set set);
  * \returns         A pointer to the next record, or `NULL` if the end of
  * the result set has been reached.
  */
-ds_record ds_result_set_get_next_data(ds_result_set set);
+ds_list ds_result_set_get_next_data(ds_result_set set);
 
 /*!
  * \brief           Returns the previous record in the result set.
@@ -114,7 +111,7 @@ ds_record ds_result_set_get_next_data(ds_result_set set);
  * \returns         A pointer to the next record, or `NULL` if the start of
  * the result set has been reached.
  */
-ds_record ds_result_set_get_prev_data(ds_result_set set);
+ds_list ds_result_set_get_prev_data(ds_result_set set);
 
 #endif      /*  PG_GENERAL_LEDGER_DS_RESULT_SET_H  */
 
