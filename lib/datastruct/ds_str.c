@@ -1,0 +1,269 @@
+/*!
+ * \file            ds_str.c
+ * \brief           Implementation of string data structure.
+ * \author          Paul Griffiths
+ * \copyright       Copyright 2014 Paul Griffiths. Distributed under the terms
+ * of the GNU General Public License. <http://www.gnu.org/licenses/>
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdarg.h>
+#include <assert.h>
+
+#include "ds_str.h"
+
+/*!  Structure to contain string  */
+struct ds_str {
+    char * data;        /*!<  The data in C-style string format     */
+    size_t length;      /*!<  The length of the string              */
+    size_t capacity;    /*!<  The size of the `data` buffer         */
+};
+
+/*!
+ * \brief           Duplicates a C-style string.
+ * \details         This can be used in place of POSIX's `strdup()`.
+ * \param src       The string to duplicate.
+ * \param length    A pointer to a `size_t` variable to contain the length
+ * of the duplicated string. This is provided for efficiency purposes, as
+ * the length of the string needs to be calculated to duplicate it, so
+ * modifying this parameter may help to avoid a second unnecessary call to
+ * `strlen()`. This argument is ignored if set to `NULL`.
+ * \returns         A pointer to the duplicated string, or `NULL` on failure.
+ * The caller is responsible for `free()`ing this string.
+ */
+static char * duplicate_cstr(const char * src, size_t * length);
+
+/*!
+ * \brief               Changes the capacity of a string.
+ * \param str           The string.
+ * \param new_capacity  The new capacity.
+ * \returns             `true` if the capacity was successfully changed,
+ * `false` otherwise.
+ */
+static bool change_capacity(struct ds_str * str, const size_t new_capacity);
+
+/*!
+ * \brief                   Changes the capacity of a string if needed.
+ * \details                 If the string's existing capacity exceeds the
+ * requirement capacity, it remains unchanged. Otherwise, the strings capacity
+ * is increased to the required capacity.
+ * \param str               The string.
+ * \param required_capacity The required capacity.
+ * \returns                 `true` if the capacity was successfully changed,
+ * or if no change was needed, `false` if a capacity change was needed but
+ * was not successful.
+ */
+static bool change_capacity_if_needed(struct ds_str * str,
+                                      const size_t required_capacity);
+
+/*!
+ * \brief           Truncates a string if necessary.
+ * \details         This function truncates the length of a string, and
+ * adds a terminating null character in the last place, if the string's
+ * capacity is not sufficient to contain the string's current length.
+ * This function would normally be called after a reduction in the capacity
+ * of the string.
+ * \param str       The string.
+ */
+static void truncate_if_needed(struct ds_str * str);
+
+/*!
+ * \brief               Creates a string using allocated memory.
+ * \details             The normal construction functions duplicate the
+ * string used to create it. In cases where allocated memory is already
+ * available (e.g. in `ds_str_create_sprintf()`) this function allows
+ * that memory to be directly assigned to the string, avoiding an
+ * unnecessary duplication.
+ * \param str           The allocated memory. IMPORTANT: If the construction
+ * of the string fails, this memory will be `free()`d.
+ * \param init_str_size The size of the allocated memory. IMPORTANT: The
+ * string's length is assumed to be one less than this quantity, and a
+ * call to `strlen()` is NOT performed.
+ * \returns             The new string, or `NULL` on failure.
+ */
+static struct ds_str * ds_str_create_direct(char * init_str,
+                                            const size_t init_str_size);
+
+struct ds_str * ds_str_create(const char * init_str) {
+    struct ds_str * new_str = malloc(sizeof *new_str);
+    if ( !new_str ) {
+        return NULL;
+    }
+
+    new_str->data = duplicate_cstr(init_str, &new_str->length);
+    if ( !new_str->data ) {
+        free(new_str);
+        return NULL;
+    }
+    new_str->capacity = new_str->length + 1;
+
+    return new_str;
+}
+
+struct ds_str * ds_str_dup(struct ds_str * src) {
+    assert(src);
+
+    return ds_str_create(src->data);
+}
+
+struct ds_str * ds_str_create_sprintf(const char * format, ...) {
+    assert(format);
+
+    /*  Determine amount of memory needed  */
+
+    char dummy_buffer[1];
+    va_list ap;
+    va_start(ap, format);
+    size_t num_written = vsnprintf(dummy_buffer, 1, format, ap);
+    va_end(ap);
+
+    /*  Allocate memory and write  */
+
+    const size_t required_alloc = num_written + 1;
+    char * new_data = malloc(required_alloc);
+    if ( !new_data ) {
+        return NULL;
+    }
+
+    va_start(ap, format);
+    num_written = vsnprintf(new_data, required_alloc, format, ap);
+    va_end(ap);
+
+    /*  Create and return new string  */
+
+    assert((num_written + 1) == required_alloc);
+    return ds_str_create_direct(new_data, required_alloc);
+}
+
+void ds_str_destroy(struct ds_str * str) {
+    assert(str && str->data);
+
+    if ( str ) {
+        free(str->data);
+        free(str);
+    }
+}
+
+void ds_str_destructor(void * str) {
+    ds_str_destroy(str);
+}
+
+const char * ds_str_cstr(struct ds_str * str) {
+    return str->data;
+}
+
+size_t ds_str_length(struct ds_str * str) {
+    return str->length;
+}
+
+struct ds_str * ds_str_size_to_fit(struct ds_str * str) {
+    assert(str);
+
+    const size_t max_capacity = str->length + 1;
+    if ( str->capacity > max_capacity ) {
+        if ( change_capacity(str, max_capacity) ) {
+            return str;
+        }
+    }
+
+    return NULL;
+}
+
+struct ds_str * ds_str_concat(struct ds_str * dst, struct ds_str * src) {
+    assert(dst && src);
+
+    const size_t req_cap = dst->length + src->length + 1;
+    if ( !change_capacity_if_needed(dst, req_cap) ) {
+        return NULL;
+    }
+    memcpy(dst->data + dst->length, src->data, src->length + 1);
+    dst->length += src->length;
+    return dst;
+}
+
+struct ds_str * ds_str_trunc(struct ds_str * str, const size_t length) {
+    assert(str && length > 0);
+
+    const size_t new_capacity = length + 1;
+    if ( !change_capacity(str, new_capacity) ) {
+        return NULL;
+    }
+
+    return str;
+}
+
+static struct ds_str * ds_str_create_direct(char * init_str,
+                                            const size_t init_str_size) {
+    assert(init_str && init_str_size > 0);
+
+    struct ds_str * new_str = malloc(sizeof *new_str);
+    if ( !new_str ) {
+        free(init_str);
+        return NULL;
+    }
+
+    new_str->data = init_str;
+    new_str->capacity = init_str_size;
+    new_str->length = init_str_size - 1;
+
+    return new_str;
+}
+
+static char * duplicate_cstr(const char * src, size_t * length) {
+    assert(src);
+
+    const size_t src_length = strlen(src);
+    char * new_str = malloc(src_length + 1);
+    if ( !new_str ) {
+        return NULL;
+    }
+
+    memcpy(new_str, src, src_length + 1);
+    if ( length ) {
+        *length = src_length;
+    }
+
+    return new_str;
+}
+
+static bool change_capacity(struct ds_str * str, const size_t new_capacity) {
+    assert(str && new_capacity > 0);
+
+    bool did_reallocate = true;
+
+    char * temp = realloc(str->data, new_capacity);
+    if ( temp ) {
+        str->data = temp;
+        str->capacity = new_capacity;
+        truncate_if_needed(str);
+    }
+    else {
+        did_reallocate = false;
+    }
+
+    return did_reallocate;
+}
+
+static bool change_capacity_if_needed(struct ds_str * str,
+                                      const size_t required_capacity) {
+    assert(str && required_capacity > 0);
+
+    if ( required_capacity > str->capacity ) {
+        return change_capacity(str, required_capacity);
+    }
+
+    return false;
+}
+
+static void truncate_if_needed(struct ds_str * str) {
+    assert(str);
+
+    if ( str->length >= str->capacity ) {
+        str->length = str->capacity - 1;
+        str->data[str->length] = '\0';
+    }
+}
+
