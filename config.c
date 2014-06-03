@@ -7,7 +7,7 @@
 #include <getopt.h>
 #include "config.h"
 #include "config_file_read/config_file_read.h"
-#include "datastruct/ds_str.h"
+#include "datastruct/data_structures.h"
 #include "gl_general/gl_general.h"
 
 static ds_str get_param_from_config(const char *key);

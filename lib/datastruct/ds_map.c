@@ -18,7 +18,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include "ds_map.h"
+#include "data_structures.h"
 
 /*!  Structure to hold a key-value pair node  */
 struct kv_pair_node {

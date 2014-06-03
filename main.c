@@ -13,11 +13,7 @@
 #include "gl_general/gl_general.h"
 #include "database/database.h"
 #include "config.h"
-#include "datastruct/ds_list.h"
-#include "datastruct/ds_result_set.h"
-#include "datastruct/ds_str.h"
-#include "datastruct/ds_vector.h"
-#include "datastruct/ds_record.h"
+#include "datastruct/data_structures.h"
 #include "delim_file_read/delim_file_read.h"
 
 ds_str login(void);

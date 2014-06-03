@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "ds_vector.h"
+#include "data_structures.h"
 
 /*!  Vector data structure  */
 struct ds_vector {

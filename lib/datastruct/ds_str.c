@@ -14,7 +14,7 @@
 #include <stdarg.h>
 #include <assert.h>
 
-#include "ds_str.h"
+#include "data_structures.h"
 
 /*!  Structure to contain string  */
 struct ds_str {

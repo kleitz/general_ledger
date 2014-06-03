@@ -14,9 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "gl_general/gl_general.h"
-#include "stringhelp/string_functions.h"
-#include "datastruct/ds_map_str.h"
-#include "datastruct/ds_str.h"
+#include "datastruct/data_structures.h"
 #include "config_file_read.h"
 
 /*!  Maximum size of buffers  */

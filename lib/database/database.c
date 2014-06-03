@@ -5,9 +5,7 @@
 #include "database/db_users.h"
 #include "database/db_entities.h"
 #include "delim_file_read/delim_file_read.h"
-#include "datastruct/ds_result_set.h"
-#include "datastruct/ds_recordset.h"
-#include "datastruct/ds_str.h"
+#include "datastruct/data_structures.h"
 
 int db_create_database_structure(void) {
     int status = db_create_users_table();

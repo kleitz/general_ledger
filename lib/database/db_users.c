@@ -3,8 +3,7 @@
 #include "database/database.h"
 #include "database/database_sql.h"
 #include "database/db_users.h"
-#include "datastruct/ds_recordset.h"
-#include "datastruct/ds_str.h"
+#include "datastruct/data_structures.h"
 
 int db_create_users_table(void) {
     return db_execute_query(db_create_users_table_sql());

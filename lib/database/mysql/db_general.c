@@ -9,11 +9,7 @@
 #include "gl_general/gl_general.h"
 #include "database/database.h"
 #include "database/database_sql.h"
-#include "datastruct/ds_result_set.h"
-#include "datastruct/ds_recordset.h"
-#include "datastruct/ds_record.h"
-#include "datastruct/ds_list.h"
-#include "datastruct/ds_str.h"
+#include "datastruct/data_structures.h"
 
 MYSQL * main_mss = NULL;
 MYSQL * conn_mss = NULL;

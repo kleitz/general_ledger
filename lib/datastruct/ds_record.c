@@ -11,9 +11,7 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "ds_record.h"
-#include "ds_vector.h"
-#include "ds_str.h"
+#include "data_structures.h"
 
 /*!  Vector data structure  */
 struct ds_record {

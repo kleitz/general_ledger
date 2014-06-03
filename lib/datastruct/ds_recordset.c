@@ -11,10 +11,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <assert.h>
-#include "datastruct/ds_recordset.h"
-#include "datastruct/ds_record.h"
-#include "datastruct/ds_list.h"
-#include "datastruct/ds_str.h"
+#include "data_structures.h"
 
 /*!  Result set structure  */
 struct ds_recordset {

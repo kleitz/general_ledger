@@ -3,8 +3,7 @@
 #include "database/database.h"
 #include "database/database_sql.h"
 #include "database/db_entities.h"
-#include "datastruct/ds_recordset.h"
-#include "datastruct/ds_str.h"
+#include "datastruct/data_structures.h"
 
 int db_create_entities_table(void) {
     return db_execute_query(db_create_entities_table_sql());

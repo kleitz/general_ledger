@@ -6,18 +6,9 @@
  * of the GNU General Public License. <http://www.gnu.org/licenses/>
  */
 
-
-/*!
- * \brief           Enables POSIX library functions
- */
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <errno.h>
-#include "ds_map_str.h"
-#include "ds_str.h"
+#include "data_structures.h"
 
 /*!  Structure to hold a key-value pair node  */
 struct kv_pair_node {

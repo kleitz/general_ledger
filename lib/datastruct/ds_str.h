@@ -9,6 +9,8 @@
 #ifndef PG_GENERAL_LEDGER_DS_STR_H
 #define PG_GENERAL_LEDGER_DS_STR_H
 
+#include <stdbool.h>
+
 /*!  Opaque data type for string  */
 typedef struct ds_str * ds_str;
 

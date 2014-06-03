@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "ds_list.h"
+#include "data_structures.h"
 
 /*!  List element data structure  */
 struct ds_list_element {
