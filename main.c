@@ -176,12 +176,12 @@ void test_functionality(void) {
 
     ds_str unt1 = ds_str_create("    a string");
     printf("Untrimmed: [%s] (%zu)\n", ds_str_cstr(unt1), ds_str_length(unt1));
-    ds_str_trim_left(unt1);
+    ds_str_trim_leading(unt1);
     printf("Trimmed: [%s] (%zu)\n", ds_str_cstr(unt1), ds_str_length(unt1));
 
     ds_str unt2 = ds_str_create("a string    ");
     printf("Untrimmed: [%s] (%zu)\n", ds_str_cstr(unt2), ds_str_length(unt2));
-    ds_str_trim_right(unt2);
+    ds_str_trim_trailing(unt2);
     printf("Trimmed: [%s] (%zu)\n", ds_str_cstr(unt2), ds_str_length(unt2));
 
     ds_str unt3 = ds_str_create("   a string   ");

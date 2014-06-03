@@ -154,8 +154,6 @@ struct ds_str * ds_str_create_sprintf(const char * format, ...) {
 }
 
 void ds_str_destroy(struct ds_str * str) {
-    assert(str && str->data);
-
     if ( str ) {
         free(str->data);
         free(str);
@@ -229,7 +227,7 @@ struct ds_str * ds_str_trunc(struct ds_str * str, const size_t length) {
 unsigned long ds_str_hash(struct ds_str * str) {
     unsigned long hash = 5381;
     int c;
-    const char * c_str = ds_str_cstr(str);
+    const char * c_str = str->data;
 
     while ( (c = *c_str++) ) {
         hash = ((hash << 5) + hash) + c;
@@ -276,34 +274,24 @@ void ds_str_split(ds_str src, ds_str * left, ds_str * right, const char sc) {
 void ds_str_trim_leading(ds_str str) {
     assert(str);
 
-    char * cptr = str->data;
     size_t i = 0;
-
-    while ( *cptr && isspace(*cptr) ) {
-        ++cptr;
+    while ( str->data[i] && isspace(str->data[i]) ) {
         ++i;
     }
-
-    if ( i ) {
-        ds_str_remove_left(str, i);
-    }
+    ds_str_remove_left(str, i);
 }
 
 void ds_str_trim_trailing(ds_str str) {
     assert(str);
 
-    const char * cptr = str->data;
     int i = str->length - 1;
     size_t num = 0;
 
-    while ( i >= 0 && isspace(cptr[i]) ) {
+    while ( i >= 0 && isspace(str->data[i]) ) {
         --i;
         ++num;
     }
-
-    if ( i >= 0 ) {
-        ds_str_remove_right(str, num);
-    }
+    ds_str_remove_right(str, num);
 }
 
 void ds_str_trim(ds_str str) {
@@ -379,7 +367,7 @@ static void truncate_if_needed(struct ds_str * str) {
 }
 
 static void ds_str_remove_right(ds_str str, const size_t numchars) {
-    if ( numchars <= str->length ) {
+    if ( numchars > 0 && numchars <= str->length ) {
         const size_t remaining = str->length - numchars;
         str->data[remaining] = '\0';
         str->length -= numchars;
@@ -387,7 +375,7 @@ static void ds_str_remove_right(ds_str str, const size_t numchars) {
 }
 
 static void ds_str_remove_left(ds_str str, const size_t numchars) {
-    if ( numchars <= str->length ) {
+    if ( numchars > 0 && numchars <= str->length ) {
         const size_t remaining = str->length - numchars;
         memmove(str->data, str->data + numchars, remaining + 1);
         str->length -= numchars;
