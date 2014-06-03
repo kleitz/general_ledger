@@ -54,15 +54,15 @@ void ds_record_clear(struct ds_record * record) {
     ds_vector_clear(record->fields);
 }
 
-void ds_record_set(struct ds_record * record,
-                   const size_t index,
-                   ds_str field) {
+void ds_record_set_field(struct ds_record * record,
+                         const size_t index,
+                         ds_str field) {
     assert(record);
 
     ds_vector_set(record->fields, index, field);
 }
 
-ds_str ds_record_field(struct ds_record * record, const size_t index) {
+ds_str ds_record_get_field(struct ds_record * record, const size_t index) {
     assert(record);
 
     return ds_vector_element(record->fields, index);

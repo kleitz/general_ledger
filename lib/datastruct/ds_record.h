@@ -49,7 +49,7 @@ void ds_record_clear(ds_record record);
  * \param field     The field to which to set.
  * \param element   The element to set.
  */
-void ds_record_set(ds_record record, const size_t index, ds_str field);
+void ds_record_set_field(ds_record record, const size_t index, ds_str field);
 
 /*!
  * \brief           Retrieves the field at a specified index.
@@ -58,7 +58,7 @@ void ds_record_set(ds_record record, const size_t index, ds_str field);
  * \returns         A pointer to the field, or `NULL` if the index is out
  * of range.
  */
-ds_str ds_record_field(ds_record record, const size_t index);
+ds_str ds_record_get_field(ds_record record, const size_t index);
 
 /*!
  * \brief           Returns the size of a record.
