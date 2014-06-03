@@ -152,13 +152,13 @@ void ds_str_split(ds_str src, ds_str * left, ds_str * right, const char sc);
  * \brief           Trims leading whitespace in-place.
  * \param str       The string.
  */
-void ds_str_trim_left(ds_str str);
+void ds_str_trim_leading(ds_str str);
 
 /*!
  * \brief           Trims trailing whitespace in-place.
  * \param str       The string.
  */
-void ds_str_trim_right(ds_str str);
+void ds_str_trim_trailing(ds_str str);
 
 /*!
  * \brief           Trims leading and trailing whitespace in-place.

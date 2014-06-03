@@ -41,7 +41,7 @@ int config_file_read(const char * filename) {
     char buffer[MAX_BUFFER_SIZE];    
     while ( fgets(buffer, sizeof buffer, config_file) ) {
         ds_str input = ds_str_create(buffer);
-        ds_str_trim(input);
+        ds_str_trim_leading(input);
 
         if ( ds_str_is_empty(input) ||
              ds_str_char_at_index(input, 0) == '#' ) {

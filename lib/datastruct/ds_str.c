@@ -273,7 +273,7 @@ void ds_str_split(ds_str src, ds_str * left, ds_str * right, const char sc) {
     }
 }
  
-void ds_str_trim_left(ds_str str) {
+void ds_str_trim_leading(ds_str str) {
     assert(str);
 
     char * cptr = str->data;
@@ -289,7 +289,7 @@ void ds_str_trim_left(ds_str str) {
     }
 }
 
-void ds_str_trim_right(ds_str str) {
+void ds_str_trim_trailing(ds_str str) {
     assert(str);
 
     const char * cptr = str->data;
@@ -307,8 +307,8 @@ void ds_str_trim_right(ds_str str) {
 }
 
 void ds_str_trim(ds_str str) {
-    ds_str_trim_left(str);
-    ds_str_trim_right(str);
+    ds_str_trim_trailing(str);
+    ds_str_trim_leading(str);
 }
 
 char ds_str_char_at_index(ds_str str, const size_t index) {
