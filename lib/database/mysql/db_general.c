@@ -10,7 +10,10 @@
 #include "database/database.h"
 #include "database/database_sql.h"
 #include "datastruct/ds_result_set.h"
+#include "datastruct/ds_recordset.h"
+#include "datastruct/ds_record.h"
 #include "datastruct/ds_list.h"
+#include "datastruct/ds_str.h"
 
 MYSQL * main_mss = NULL;
 MYSQL * conn_mss = NULL;
@@ -182,3 +185,65 @@ ds_result_set db_create_result_set_from_query(const char * query) {
 
     return NULL;
 }
+
+ds_recordset db_create_recordset_from_query(const char * query) {
+    if ( conn_mss ) {
+        int status = mysql_query(conn_mss, query);
+        if ( status ) {
+            db_error_msg("Query unsuccessful", conn_mss);
+            return NULL;
+        }
+
+        MYSQL_RES * result = mysql_store_result(conn_mss);
+
+        if ( !result ) {
+            db_error_msg("Couldn't store result", conn_mss);
+            return NULL;
+        }
+
+        MYSQL_ROW row;
+
+        unsigned int num_fields = mysql_num_fields(result);
+        ds_recordset set = ds_recordset_create(num_fields);
+
+        ds_record field_names = ds_record_create(num_fields);
+        MYSQL_FIELD * fields = mysql_fetch_fields(result);
+
+        for ( size_t i = 0; i < num_fields; ++i ) {
+            ds_str new_field = ds_str_create(fields[i].name);
+            ds_record_set_field(field_names, i, new_field);
+        }
+
+        ds_recordset_set_headers(set, field_names);
+
+        while ( (row = mysql_fetch_row(result)) ) {
+            ds_record record = ds_record_create(num_fields);
+
+            unsigned long * lengths = mysql_fetch_lengths(result);
+
+            for ( size_t i = 0; i < num_fields; ++i ) {
+                ds_str new_field;
+                if ( lengths[i] ) {
+
+                    /*  CHECK IF THIS IS BAD  */
+
+                    new_field = ds_str_create_sprintf("%.*s",
+                            (int) lengths[i], row[i]);
+                }
+                else {
+                    new_field = ds_str_create("");
+                }
+
+                ds_record_set_field(record, i, new_field);
+            }
+
+            ds_recordset_add_record(set, record);
+        }
+
+        mysql_free_result(result);
+        return set;
+    }
+
+    return NULL;
+}
+

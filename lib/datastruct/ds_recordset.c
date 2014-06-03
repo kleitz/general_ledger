@@ -390,6 +390,7 @@ static ds_str ds_recordset_get_next_line(struct ds_recordset * set) {
 
 ds_str add_line_to_report(ds_str report, ds_str line) {
     ds_str_concat(report, line);
+    ds_str_concat_cstr(report, "\n");
     ds_str_destroy(line);
     return report;
 }

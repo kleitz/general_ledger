@@ -6,6 +6,8 @@
 #include "database/db_entities.h"
 #include "delim_file_read/delim_file_read.h"
 #include "datastruct/ds_result_set.h"
+#include "datastruct/ds_recordset.h"
+#include "datastruct/ds_str.h"
 
 int db_create_database_structure(void) {
     int status = db_create_users_table();
@@ -43,3 +45,9 @@ int db_add_sample_data(const char * table, const char * filename) {
     return 0;
 }
 
+ds_str db_create_report_from_query(const char * query) {
+    ds_recordset results = db_create_recordset_from_query(query);
+    ds_str report = ds_recordset_get_text_report(results);
+    ds_recordset_destroy(results);
+    return report;
+}

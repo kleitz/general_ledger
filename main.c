@@ -18,6 +18,8 @@
 #include "datastruct/ds_list.h"
 #include "datastruct/ds_result_set.h"
 #include "datastruct/ds_str.h"
+#include "datastruct/ds_vector.h"
+#include "datastruct/ds_record.h"
 #include "delim_file_read/delim_file_read.h"
 
 char * login(void);
@@ -72,14 +74,14 @@ int main(int argc, char ** argv) {
                     db_load_sample_data();
                 }
                 else if ( params->list_users ) {
-                    char * report = db_list_users_report();
-                    printf("%s", report);
-                    free(report);
+                    ds_str report = db_list_users_report();
+                    printf("%s", ds_str_cstr(report));
+                    ds_str_destroy(report);
                 }
                 else if ( params->list_entities ) {
-                    char * report = db_list_entities_report();
-                    printf("%s", report);
-                    free(report);
+                    ds_str report = db_list_entities_report();
+                    printf("%s", ds_str_cstr(report));
+                    ds_str_destroy(report);
                 }
 
                 db_close();
@@ -151,28 +153,56 @@ void print_version_message(char * progname) {
 }
 
 void test_functionality(void) {
-    ds_str mystr1 = ds_str_create("Hello, world!");
-    ds_str mystr2 = ds_str_create(" Another string!");
-    ds_str mystr3 = ds_str_dup(mystr1);
+    const size_t record_size = 4;
+    ds_record rec = ds_record_create(record_size);
 
-    printf("[%s] (%zu)\n", ds_str_cstr(mystr1), ds_str_length(mystr1));
-    printf("[%s] (%zu)\n", ds_str_cstr(mystr2), ds_str_length(mystr2));
-    printf("[%s] (%zu)\n", ds_str_cstr(mystr3), ds_str_length(mystr3));
+    /*  Run One  */
 
-    ds_str_concat(mystr1, mystr2);
+    for ( size_t i = 0; i < record_size; ++i ) {
+        ds_str new_str = ds_str_create_sprintf("Testing %zu, %zu!",
+                                               i * 2, i * 2 + 1);
+        ds_record_set_field(rec, i, new_str);
+    }
 
-    printf("[%s] (%zu)\n", ds_str_cstr(mystr1), ds_str_length(mystr1));
+    for ( size_t i = 0; i < record_size; ++i ) {
+        ds_str cur_str = ds_record_get_field(rec, i);
+        printf("[%zu]: %s\n", i + 1, ds_str_cstr(cur_str));
+    }
 
-    ds_str mystr4 = ds_str_create_sprintf("%d, %.2f, %s", 4, 5.432, "Hey!");
+    /*  Run Two  */
 
-    printf("[%s] (%zu)\n", ds_str_cstr(mystr4), ds_str_length(mystr4));
+    for ( size_t i = 0; i < record_size; ++i ) {
+        ds_str new_str = ds_str_create_sprintf("Testing %zu, %zu!",
+                                               i * 2 + 8, i * 2 + 9);
+        ds_record_set_field(rec, i, new_str);
+    }
 
-    ds_str_trunc(mystr1, 6);
+    for ( size_t i = 0; i < record_size; ++i ) {
+        ds_str cur_str = ds_record_get_field(rec, i);
+        printf("[%zu]: %s\n", i + 1, ds_str_cstr(cur_str));
+    }
 
-    printf("[%s] (%zu)\n", ds_str_cstr(mystr1), ds_str_length(mystr1));
+    /*  Run Three  */
 
-    ds_str_destroy(mystr1);
-    ds_str_destroy(mystr2);
-    ds_str_destroy(mystr3);
-    ds_str_destroy(mystr4);
+    ds_record_clear(rec);
+    for ( size_t i = 0; i < record_size; ++i ) {
+        ds_str new_str = ds_str_create_sprintf("Testing %zu, %zu!",
+                                               i * 2 + 16, i * 2 + 17);
+        ds_record_set_field(rec, i, new_str);
+    }
+
+    for ( size_t i = 0; i < record_size; ++i ) {
+        ds_str cur_str = ds_record_get_field(rec, i);
+        printf("[%zu]: %s\n", i + 1, ds_str_cstr(cur_str));
+    }
+
+    ds_str cur_str;
+    size_t j = 1;
+    for ( ds_record_seek_start(rec);
+          (cur_str = ds_record_get_next_data(rec));
+        ) {
+        printf("[%zu]: %s\n", j, ds_str_cstr(cur_str));
+    }
+
+    ds_record_destroy(rec);
 }
