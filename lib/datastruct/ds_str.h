@@ -35,6 +35,22 @@ ds_str ds_str_dup(ds_str src);
 ds_str ds_str_create_sprintf(const char * format, ...);
 
 /*!
+ * \brief               Creates a string using allocated memory.
+ * \details             The normal construction functions duplicate the
+ * string used to create it. In cases where allocated memory is already
+ * available (e.g. in `ds_str_create_sprintf()`) this function allows
+ * that memory to be directly assigned to the string, avoiding an
+ * unnecessary duplication.
+ * \param str           The allocated memory. IMPORTANT: If the construction
+ * of the string fails, this memory will be `free()`d.
+ * \param init_str_size The size of the allocated memory. IMPORTANT: The
+ * string's length is assumed to be one less than this quantity, and a
+ * call to `strlen()` is NOT performed.
+ * \returns             The new string, or `NULL` on failure.
+ */
+ds_str ds_str_create_direct(char * init_str, const size_t init_str_size);
+
+/*!
  * \brief           Destroys a string and releases allocated resources.
  * \param str       The string to destroy..
  */
@@ -71,6 +87,14 @@ size_t ds_str_length(ds_str str);
  * \returns         The destination string, or `NULL` on failure.
  */
 ds_str ds_str_concat(ds_str dst, ds_str src);
+
+/*!
+ * \brief           Concatenates a C-style string to a string.
+ * \param dst       The destination string.
+ * \param src       The source strings.
+ * \returns         The destination string, or `NULL` on failure.
+ */
+ds_str ds_str_concat_cstr(struct ds_str * dst, const char * src);
 
 /*!
  * \brief           Truncates a string.

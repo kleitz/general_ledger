@@ -70,23 +70,6 @@ static bool change_capacity_if_needed(struct ds_str * str,
  */
 static void truncate_if_needed(struct ds_str * str);
 
-/*!
- * \brief               Creates a string using allocated memory.
- * \details             The normal construction functions duplicate the
- * string used to create it. In cases where allocated memory is already
- * available (e.g. in `ds_str_create_sprintf()`) this function allows
- * that memory to be directly assigned to the string, avoiding an
- * unnecessary duplication.
- * \param str           The allocated memory. IMPORTANT: If the construction
- * of the string fails, this memory will be `free()`d.
- * \param init_str_size The size of the allocated memory. IMPORTANT: The
- * string's length is assumed to be one less than this quantity, and a
- * call to `strlen()` is NOT performed.
- * \returns             The new string, or `NULL` on failure.
- */
-static struct ds_str * ds_str_create_direct(char * init_str,
-                                            const size_t init_str_size);
-
 struct ds_str * ds_str_create(const char * init_str) {
     struct ds_str * new_str = malloc(sizeof *new_str);
     if ( !new_str ) {
@@ -138,6 +121,23 @@ struct ds_str * ds_str_create_sprintf(const char * format, ...) {
     return ds_str_create_direct(new_data, required_alloc);
 }
 
+ struct ds_str * ds_str_create_direct(char * init_str,
+                                      const size_t init_str_size) {
+    assert(init_str && init_str_size > 0);
+
+    struct ds_str * new_str = malloc(sizeof *new_str);
+    if ( !new_str ) {
+        free(init_str);
+        return NULL;
+    }
+
+    new_str->data = init_str;
+    new_str->capacity = init_str_size;
+    new_str->length = init_str_size - 1;
+
+    return new_str;
+}
+
 void ds_str_destroy(struct ds_str * str) {
     assert(str && str->data);
 
@@ -184,6 +184,20 @@ struct ds_str * ds_str_concat(struct ds_str * dst, struct ds_str * src) {
     return dst;
 }
 
+struct ds_str * ds_str_concat_cstr(struct ds_str * dst, const char * src) {
+    assert(dst && src);
+
+    ds_str src_str = ds_str_create(src);
+    if ( !src_str ) {
+        return NULL;
+    }
+
+    ds_str return_str = ds_str_concat(dst, src_str);
+    ds_str_destroy(src_str);
+
+    return return_str;
+}
+
 struct ds_str * ds_str_trunc(struct ds_str * str, const size_t length) {
     assert(str && length > 0);
 
@@ -193,23 +207,6 @@ struct ds_str * ds_str_trunc(struct ds_str * str, const size_t length) {
     }
 
     return str;
-}
-
-static struct ds_str * ds_str_create_direct(char * init_str,
-                                            const size_t init_str_size) {
-    assert(init_str && init_str_size > 0);
-
-    struct ds_str * new_str = malloc(sizeof *new_str);
-    if ( !new_str ) {
-        free(init_str);
-        return NULL;
-    }
-
-    new_str->data = init_str;
-    new_str->capacity = init_str_size;
-    new_str->length = init_str_size - 1;
-
-    return new_str;
 }
 
 static char * duplicate_cstr(const char * src, size_t * length) {
