@@ -2,12 +2,13 @@
 #define PG_GENERAL_LEDGER_CONFIG_H
 
 #include <stdbool.h>
+#include "datastruct/ds_str.h"
 
 struct params {
-    char * hostname;
-    char * database;
-    char * username;
-    char * password;
+    ds_str hostname;
+    ds_str database;
+    ds_str username;
+    ds_str password;
     bool help;
     bool version;
     bool create;

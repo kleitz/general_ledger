@@ -13,6 +13,8 @@
 #ifndef PG_GENERAL_LEDGER_CONFIG_FILE_READ_H
 #define PG_GENERAL_LEDGER_CONFIG_FILE_READ_H
 
+#include "datastruct/ds_str.h"
+
 /*!  Return status for success  */
 #define CONFIG_FILE_OK 0
 
@@ -46,12 +48,7 @@ void config_file_free(void);
  * was not present in the configuration file. The caller should not modify
  * the string to which the pointer points.
  */
-const char * config_file_value(const char * key);
-
-/*!
- * \brief           Prints all the key-value pairs to stdout.
- */
-void config_file_print_all();
+ds_str config_file_value(ds_str key);
 
 #endif      /*  PG_GENERAL_LEDGER_CONFIG_FILE_READ_H  */
 

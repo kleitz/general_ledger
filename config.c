@@ -7,9 +7,10 @@
 #include <getopt.h>
 #include "config.h"
 #include "config_file_read/config_file_read.h"
+#include "datastruct/ds_str.h"
 #include "gl_general/gl_general.h"
 
-static char *get_param_from_config(char *key);
+static ds_str get_param_from_config(const char *key);
 
 struct params *params_init(void) {
     struct params *new_params = malloc(sizeof *new_params);
@@ -34,29 +35,24 @@ struct params *params_init(void) {
 
 void params_free(struct params *params) {
     if (params) {
-        free(params->hostname);
-        free(params->database);
-        free(params->username);
-        free(params->password);
+        ds_str_destroy(params->hostname);
+        ds_str_destroy(params->database);
+        ds_str_destroy(params->username);
+        ds_str_destroy(params->password);
         free(params);
     }
 }
 
-static char *get_param_from_config(char *key) {
-    const char *value;
-    char *new_param = NULL;
+static ds_str get_param_from_config(const char * key) {
+    ds_str value;
 
-    if ((value = config_file_value(key))) {
-        new_param = strdup(value);
-        if (!new_param) {
-            gl_log_msg("Couldn't allocate memory for %s name.", key);
-        };
-    }
-    else {
+    ds_str s_key = ds_str_create(key);
+    if ( !(value = config_file_value(s_key)) ) {
         gl_log_msg("Name of %s not specified in configuration file.", key);
     }
+    ds_str_destroy(s_key);
 
-    return new_param;
+    return ds_str_dup(value);
 }
 
 int get_configuration(struct params * params) {

@@ -7,8 +7,6 @@
  * of the GNU General Public License. <http://www.gnu.org/licenses/>
  */
 
-#define _XOPEN_SOURCE 500
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +20,7 @@
 #include "datastruct/ds_record.h"
 #include "delim_file_read/delim_file_read.h"
 
-char * login(void);
+ds_str login(void);
 void print_usage_message(char * progname);
 void print_version_message(char * progname);
 void print_help_message(char * progname);
@@ -61,8 +59,10 @@ int main(int argc, char ** argv) {
         else {
             params->password = login();
             if ( params->password ) {
-                db_connect(params->hostname, params->database,
-                           params->username, params->password);
+                db_connect(ds_str_cstr(params->hostname),
+                           ds_str_cstr(params->database),
+                           ds_str_cstr(params->username),
+                           ds_str_cstr(params->password));
 
                 if ( params->create ) {
                     db_create_database_structure();
@@ -101,9 +101,9 @@ int main(int argc, char ** argv) {
     return EXIT_SUCCESS;
 }
 
-char * login(void) {
+ds_str login(void) {
     char buffer[30] = {0};
-    char * passwd = NULL;
+    ds_str passwd = NULL;
 
     printf("Enter password (*WILL BE VISIBLE*): ");
     fflush(stdout);
@@ -114,7 +114,7 @@ char * login(void) {
             buffer[length - 1] = '\0';
         }
 
-        passwd = strdup(buffer);
+        passwd = ds_str_create(buffer);
         if ( !passwd ) {
             gl_log_msg("Couldn't allocate memory for password.");
         }
@@ -153,56 +153,63 @@ void print_version_message(char * progname) {
 }
 
 void test_functionality(void) {
-    const size_t record_size = 4;
-    ds_record rec = ds_record_create(record_size);
+    ds_str initial_string = ds_str_create("Hello, world!");
+    ds_str lss = ds_str_substr_left(initial_string, 6);
+    ds_str rss = ds_str_substr_right(initial_string, 6);
+    ds_str lss2 = ds_str_substr_left(initial_string, 100);
+    ds_str rss2 = ds_str_substr_right(initial_string, 100);
 
-    /*  Run One  */
+    printf("Initial string: [%s]\n", ds_str_cstr(initial_string));
+    printf("Left substring: [%s]\n", ds_str_cstr(lss));
+    printf("Right substring: [%s]\n", ds_str_cstr(rss));
+    printf("Left wide substring: [%s]\n", ds_str_cstr(lss2));
+    printf("Right wide substring: [%s]\n", ds_str_cstr(rss2));
 
-    for ( size_t i = 0; i < record_size; ++i ) {
-        ds_str new_str = ds_str_create_sprintf("Testing %zu, %zu!",
-                                               i * 2, i * 2 + 1);
-        ds_record_set_field(rec, i, new_str);
+    ds_str main_string = ds_str_create("key=value");
+    ds_str left;
+    ds_str right;
+    ds_str_split(main_string, &left, &right, '=');
+
+    printf("Main string: [%s] (%zu)\n", ds_str_cstr(main_string), ds_str_length(main_string));
+    printf("Left split: [%s] (%zu)\n", ds_str_cstr(left), ds_str_length(left));
+    printf("Right right: [%s] (%zu)\n", ds_str_cstr(right), ds_str_length(right));
+
+    ds_str unt1 = ds_str_create("    a string");
+    printf("Untrimmed: [%s] (%zu)\n", ds_str_cstr(unt1), ds_str_length(unt1));
+    ds_str_trim_left(unt1);
+    printf("Trimmed: [%s] (%zu)\n", ds_str_cstr(unt1), ds_str_length(unt1));
+
+    ds_str unt2 = ds_str_create("a string    ");
+    printf("Untrimmed: [%s] (%zu)\n", ds_str_cstr(unt2), ds_str_length(unt2));
+    ds_str_trim_right(unt2);
+    printf("Trimmed: [%s] (%zu)\n", ds_str_cstr(unt2), ds_str_length(unt2));
+
+    ds_str unt3 = ds_str_create("   a string   ");
+    printf("Untrimmed: [%s] (%zu)\n", ds_str_cstr(unt3), ds_str_length(unt3));
+    ds_str_trim(unt3);
+    printf("Trimmed: [%s] (%zu)\n", ds_str_cstr(unt3), ds_str_length(unt3));
+
+    printf("%c %c %c\n", ds_str_char_at_index(unt3, 2),
+                         ds_str_char_at_index(unt3, 3),
+                         ds_str_char_at_index(unt3, 4));
+
+    if ( ds_str_is_empty(unt3) ) {
+        printf("unt3 is empty.\n");
+    }
+    else {
+        printf("unt3 is not empty.\n");
     }
 
-    for ( size_t i = 0; i < record_size; ++i ) {
-        ds_str cur_str = ds_record_get_field(rec, i);
-        printf("[%zu]: %s\n", i + 1, ds_str_cstr(cur_str));
-    }
-
-    /*  Run Two  */
-
-    for ( size_t i = 0; i < record_size; ++i ) {
-        ds_str new_str = ds_str_create_sprintf("Testing %zu, %zu!",
-                                               i * 2 + 8, i * 2 + 9);
-        ds_record_set_field(rec, i, new_str);
-    }
-
-    for ( size_t i = 0; i < record_size; ++i ) {
-        ds_str cur_str = ds_record_get_field(rec, i);
-        printf("[%zu]: %s\n", i + 1, ds_str_cstr(cur_str));
-    }
-
-    /*  Run Three  */
-
-    ds_record_clear(rec);
-    for ( size_t i = 0; i < record_size; ++i ) {
-        ds_str new_str = ds_str_create_sprintf("Testing %zu, %zu!",
-                                               i * 2 + 16, i * 2 + 17);
-        ds_record_set_field(rec, i, new_str);
-    }
-
-    for ( size_t i = 0; i < record_size; ++i ) {
-        ds_str cur_str = ds_record_get_field(rec, i);
-        printf("[%zu]: %s\n", i + 1, ds_str_cstr(cur_str));
-    }
-
-    ds_str cur_str;
-    size_t j = 1;
-    for ( ds_record_seek_start(rec);
-          (cur_str = ds_record_get_next_data(rec));
-        ) {
-        printf("[%zu]: %s\n", j, ds_str_cstr(cur_str));
-    }
-
-    ds_record_destroy(rec);
+    ds_str_destroy(initial_string);
+    ds_str_destroy(lss);
+    ds_str_destroy(rss);
+    ds_str_destroy(lss2);
+    ds_str_destroy(rss2);
+    ds_str_destroy(main_string);
+    ds_str_destroy(left);
+    ds_str_destroy(right);
+    ds_str_destroy(unt1);
+    ds_str_destroy(unt2);
+    ds_str_destroy(unt3);
 }
+

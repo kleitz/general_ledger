@@ -12,9 +12,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "gl_general/gl_general.h"
 #include "stringhelp/string_functions.h"
-#include "datastruct/ds_map.h"
+#include "datastruct/ds_map_str.h"
+#include "datastruct/ds_str.h"
 #include "config_file_read.h"
 
 /*!  Maximum size of buffers  */
@@ -24,7 +26,7 @@
 #define CONFIG_MAP_SIZE 100
 
 /*!  File scope variable for the hash map  */
-static ds_map config_map = NULL;
+static ds_map_str config_map = NULL;
 
 int config_file_read(const char * filename) {
     FILE * config_file = fopen(filename, "r");
@@ -34,47 +36,45 @@ int config_file_read(const char * filename) {
     }
 
     int retval = CONFIG_FILE_OK;
-    config_map = ds_map_init(CONFIG_MAP_SIZE);
+    config_map = ds_map_str_init(CONFIG_MAP_SIZE);
 
     char buffer[MAX_BUFFER_SIZE];    
     while ( fgets(buffer, sizeof buffer, config_file) ) {
-        char key[MAX_BUFFER_SIZE] = {0};
-        char value[MAX_BUFFER_SIZE] = {0};
+        ds_str input = ds_str_create(buffer);
+        ds_str_trim(input);
 
-        trim(buffer);
-        if ( buffer[0] == '#' || buffer[0] == '\0' ) {
+        if ( ds_str_is_empty(input) ||
+             ds_str_char_at_index(input, 0) == '#' ) {
+            ds_str_destroy(input);
             continue;
         }
 
-        size_t buf_idx = 0, key_idx = 0;
-        while ( buffer[buf_idx] && buffer[buf_idx] != '=' ) {
-            key[key_idx++] = buffer[buf_idx++];
-        }
-        if ( buffer[buf_idx++] == '=' ) {
-            size_t val_idx = 0;
-            while ( buffer[buf_idx] ) {
-                value[val_idx++] = buffer[buf_idx++];
-            }
-        }
+        ds_str key, value;
+        ds_str_split(input, &key, &value, '=');
 
-        if ( value[0] == '\0' ) {
+        if ( !key || !value ) {
             retval = CONFIG_FILE_MALFORMED_FILE;
             config_file_free();
+            ds_str_destroy(input);
             break;
         }
 
-        trim(key);
-        trim(value);
-        ds_map_insert(config_map, key, value);
+        ds_str_trim(key);
+        ds_str_trim(value);
+        ds_map_str_insert(config_map, key, value);
+
+        ds_str_destroy(key);
+        ds_str_destroy(value);
+        ds_str_destroy(input);
     }
 
     fclose(config_file);
     return retval;
 }
 
-const char * config_file_value(const char * key) {
+ds_str config_file_value(ds_str key) {
     if ( config_map ) {
-        return ds_map_get_value(config_map, key);
+        return ds_map_str_get_value(config_map, key);
     }
     else {
         return NULL;
@@ -83,14 +83,8 @@ const char * config_file_value(const char * key) {
 
 void config_file_free(void) {
     if ( config_map ) {
-        ds_map_destroy(config_map);
+        ds_map_str_destroy(config_map);
         config_map = NULL;
-    }
-}
-
-void config_file_print_all(void) {
-    if ( config_map ) {
-        ds_map_print_all(config_map, stdout);
     }
 }
 
