@@ -121,5 +121,65 @@ unsigned long ds_str_hash(struct ds_str * str);
  */
 int ds_str_compare(ds_str s1, ds_str s2);
 
+/*!
+ * \brief           Returns a left substring.
+ * \param str       The string.
+ * \param numchars  The number of left characters to return. If this is
+ * greater than the length of the string, the whole string is returned.
+ * \returns         A new string representing the substring.
+ */
+ds_str ds_str_substr_left(ds_str str, const size_t numchars);
+
+/*!
+ * \brief           Returns a right substring.
+ * \param str       The string.
+ * \param numchars  The number of right characters to return. If this is
+ * greater than the length of the string, the whole string is returned.
+ * \returns         A new string representing the substring.
+ */
+ds_str ds_str_substr_right(ds_str str, const size_t numchars);
+
+/*!
+ * \brief           Splits a string
+ * \param src       The string to split.
+ * \param left      Pointer to left substring (modified)
+ * \param right     Pointer to right substring (modified)
+ * \param sc        Split character.
+ */
+void ds_str_split(ds_str src, ds_str * left, ds_str * right, const char sc);
+
+/*!
+ * \brief           Trims leading whitespace in-place.
+ * \param str       The string.
+ */
+void ds_str_trim_left(ds_str str);
+
+/*!
+ * \brief           Trims trailing whitespace in-place.
+ * \param str       The string.
+ */
+void ds_str_trim_right(ds_str str);
+
+/*!
+ * \brief           Trims leading and trailing whitespace in-place.
+ * \param str       The string.
+ */
+void ds_str_trim(ds_str str);
+
+/*!
+ * \brief           Returns the character at a specified index.
+ * \param str       The string.
+ * \param index     The specified index.
+ * \returns         The character at the specified index.
+ */
+char ds_str_char_at_index(ds_str str, const size_t index);
+
+/*!
+ * \brief           Checks if a string is empty.
+ * \param str       The string.
+ * \returns         `true` is the string is empty, `false` otherwise.
+ */
+bool ds_str_is_empty(ds_str str);
+
 #endif      /*  PG_GENERAL_LEDGER_DS_STR_H  */
 

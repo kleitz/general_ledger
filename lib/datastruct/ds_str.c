@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdarg.h>
 #include <assert.h>
 
@@ -69,6 +70,20 @@ static bool change_capacity_if_needed(struct ds_str * str,
  * \param str       The string.
  */
 static void truncate_if_needed(struct ds_str * str);
+
+/*!
+ * \brief           Removes characters at the start of a string, in place.
+ * \param str       The string.
+ * \param numchars  The number of characters to remove.
+ */
+static void ds_str_remove_left(ds_str str, const size_t numchars);
+
+/*!
+ * \brief           Removes characters at the end of a string, in place.
+ * \param str       The string.
+ * \param numchars  The number of characters to remove.
+ */
+static void ds_str_remove_right(ds_str str, const size_t numchars);
 
 struct ds_str * ds_str_create(const char * init_str) {
     struct ds_str * new_str = malloc(sizeof *new_str);
@@ -199,11 +214,13 @@ struct ds_str * ds_str_concat_cstr(struct ds_str * dst, const char * src) {
 }
 
 struct ds_str * ds_str_trunc(struct ds_str * str, const size_t length) {
-    assert(str && length > 0);
+    assert(str);
 
     const size_t new_capacity = length + 1;
-    if ( !change_capacity(str, new_capacity) ) {
-        return NULL;
+    if ( new_capacity < str->capacity ) {
+        if ( !change_capacity(str, new_capacity) ) {
+            return NULL;
+        }
     }
 
     return str;
@@ -223,6 +240,87 @@ unsigned long ds_str_hash(struct ds_str * str) {
 
 int ds_str_compare(ds_str s1, ds_str s2) {
     return strcmp(ds_str_cstr(s1), ds_str_cstr(s2));
+}
+
+ds_str ds_str_substr_left(ds_str str, const size_t numchars) {
+    ds_str new_substr = ds_str_dup(str);
+    ds_str_remove_right(new_substr, new_substr->length - numchars);
+    return new_substr;
+}
+
+ds_str ds_str_substr_right(ds_str str, const size_t numchars) {
+    ds_str new_substr = ds_str_dup(str);
+    ds_str_remove_left(new_substr, new_substr->length - numchars);
+    return new_substr;
+}
+
+void ds_str_split(ds_str src, ds_str * left, ds_str * right, const char sc) {
+    const char * cptr = src->data;
+
+    size_t idx = 0;
+    while ( *cptr && *cptr != sc ) {
+        ++cptr;
+        ++idx;
+    }
+
+    if ( !*cptr ) {
+        *left = NULL;
+        *right = NULL;
+    }
+    else {
+        *left = ds_str_substr_left(src, idx);
+        *right = ds_str_substr_right(src, src->length - idx - 1);
+    }
+}
+ 
+void ds_str_trim_left(ds_str str) {
+    assert(str);
+
+    char * cptr = str->data;
+    size_t i = 0;
+
+    while ( *cptr && isspace(*cptr) ) {
+        ++cptr;
+        ++i;
+    }
+
+    if ( i ) {
+        ds_str_remove_left(str, i);
+    }
+}
+
+void ds_str_trim_right(ds_str str) {
+    assert(str);
+
+    const char * cptr = str->data;
+    int i = str->length - 1;
+    size_t num = 0;
+
+    while ( i >= 0 && isspace(cptr[i]) ) {
+        --i;
+        ++num;
+    }
+
+    if ( i >= 0 ) {
+        ds_str_remove_right(str, num);
+    }
+}
+
+void ds_str_trim(ds_str str) {
+    ds_str_trim_left(str);
+    ds_str_trim_right(str);
+}
+
+char ds_str_char_at_index(ds_str str, const size_t index) {
+    assert(str && index < str->length);
+
+    return str->data[index];
+}
+
+bool ds_str_is_empty(ds_str str) {
+    assert(str);
+
+    return str->length == 0;
 }
 
 static char * duplicate_cstr(const char * src, size_t * length) {
@@ -277,6 +375,22 @@ static void truncate_if_needed(struct ds_str * str) {
     if ( str->length >= str->capacity ) {
         str->length = str->capacity - 1;
         str->data[str->length] = '\0';
+    }
+}
+
+static void ds_str_remove_right(ds_str str, const size_t numchars) {
+    if ( numchars <= str->length ) {
+        const size_t remaining = str->length - numchars;
+        str->data[remaining] = '\0';
+        str->length -= numchars;
+    }
+}
+
+static void ds_str_remove_left(ds_str str, const size_t numchars) {
+    if ( numchars <= str->length ) {
+        const size_t remaining = str->length - numchars;
+        memmove(str->data, str->data + numchars, remaining + 1);
+        str->length -= numchars;
     }
 }
 
