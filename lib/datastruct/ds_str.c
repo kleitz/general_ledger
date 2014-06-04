@@ -24,6 +24,19 @@ struct ds_str {
 };
 
 /*!
+ * \brief           Directly assigns dynamically allocated data to a string.
+ * \param dst       The string to which to assign.
+ * \param src       The dynamically allocated C-style string to assign.
+ * \param size      The size of the allocated memory.
+ * \param length    The length of the C-style string.
+ * \returns         `dst`.
+ */
+static ds_str ds_str_assign_cstr_direct(ds_str dst,
+                                        char * src,
+                                        const size_t size,
+                                        const size_t length);
+
+/*!
  * \brief           Assigns a C-style string to a string with length.
  * \details         Providing the length avoids a call to `strlen()`, which
  * is more efficient if the length is already known.
@@ -342,6 +355,38 @@ bool ds_str_doubleval(ds_str str, double * value) {
         *value = n;
         return true;
     }
+}
+
+ds_str ds_str_getline(ds_str str, const size_t size, FILE * fp) {
+    char * buffer = malloc(size);
+    if ( !buffer ) {
+        return NULL;
+    }
+
+    if ( !fgets(buffer, size, fp) ) {
+        free(buffer);
+        return NULL;
+    }
+
+    const size_t length = strlen(buffer);
+    if ( length && buffer[length - 1] == '\n' ) {
+        buffer[length - 1] = '\0';
+    }
+    return ds_str_assign_cstr_direct(str, buffer, size, length);
+}
+
+static ds_str ds_str_assign_cstr_direct(ds_str dst,
+                                        char * src,
+                                        const size_t size,
+                                        const size_t length) {
+    assert(size > 0 && length < size);
+
+    free(dst->data);
+    dst->data = src;
+    dst->capacity = size;
+    dst->length = length;
+
+    return dst;
 }
 
 static ds_str ds_str_assign_cstr_length(ds_str dst,
