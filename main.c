@@ -29,8 +29,8 @@ void test_functionality(void);
  */
 
 int main(int argc, char ** argv) {
-    test_functionality();
-    return 0;
+    //test_functionality();
+    //return 0;
 
     gl_set_logging(true);
 
