@@ -9,6 +9,7 @@
 #ifndef PG_GENERAL_LEDGER_DS_STR_H
 #define PG_GENERAL_LEDGER_DS_STR_H
 
+#include <stdio.h>
 #include <stdbool.h>
 
 /*!  Opaque data type for string  */
