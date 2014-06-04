@@ -186,8 +186,9 @@ ds_str ds_str_create_sprintf(const char * format, ...) {
 void ds_str_destroy(ds_str str) {
     if ( str ) {
 
-        /*  Debug sanity check  */
+        /*  Debug sanity checks  */
         assert(strlen(str->data) == str->length);
+        assert(str->capacity > str->length);
 
         free(str->data);
         free(str);
@@ -368,9 +369,10 @@ ds_str ds_str_getline(ds_str str, const size_t size, FILE * fp) {
         return NULL;
     }
 
-    const size_t length = strlen(buffer);
+    size_t length = strlen(buffer);
     if ( length && buffer[length - 1] == '\n' ) {
         buffer[length - 1] = '\0';
+        --length;
     }
     return ds_str_assign_cstr_direct(str, buffer, size, length);
 }

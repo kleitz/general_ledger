@@ -36,24 +36,19 @@ int config_file_read(const char * filename) {
     int retval = CONFIG_FILE_OK;
     config_map = ds_map_str_init(CONFIG_MAP_SIZE);
 
-    char buffer[MAX_BUFFER_SIZE];    
-    while ( fgets(buffer, sizeof buffer, config_file) ) {
-        ds_str input = ds_str_create(buffer);
-        ds_str_trim_leading(input);
-
-        if ( ds_str_is_empty(input) ||
-             ds_str_char_at_index(input, 0) == '#' ) {
-            ds_str_destroy(input);
+    ds_str buffer = ds_str_create("");
+    while ( ds_str_getline(buffer, MAX_BUFFER_SIZE, config_file) ) {
+        if ( ds_str_is_empty(buffer) ||
+             ds_str_char_at_index(buffer, 0) == '#' ) {
             continue;
         }
 
         ds_str key, value;
-        ds_str_split(input, &key, &value, '=');
+        ds_str_split(buffer, &key, &value, '=');
 
         if ( !key || !value ) {
             retval = CONFIG_FILE_MALFORMED_FILE;
             config_file_free();
-            ds_str_destroy(input);
             break;
         }
 
@@ -63,20 +58,15 @@ int config_file_read(const char * filename) {
 
         ds_str_destroy(key);
         ds_str_destroy(value);
-        ds_str_destroy(input);
     }
 
+    ds_str_destroy(buffer);
     fclose(config_file);
     return retval;
 }
 
 ds_str config_file_value(ds_str key) {
-    if ( config_map ) {
-        return ds_map_str_get_value(config_map, key);
-    }
-    else {
-        return NULL;
-    }
+    return config_map ? ds_map_str_get_value(config_map, key) : NULL;
 }
 
 void config_file_free(void) {

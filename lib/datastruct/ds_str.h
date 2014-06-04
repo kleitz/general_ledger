@@ -236,5 +236,15 @@ bool ds_str_intval(ds_str str, const int base, int * value);
  */
 bool ds_str_doubleval(ds_str str, double * value);
 
+/*!
+ * \brief           Gets a line from a file and assigns it to a string.
+ * \details         Any trailing newline character is stripped.
+ * \param str       The string.
+ * \param size      The maximum number of bytes to read, including the null.
+ * \param fp        The file pointer from which to read.
+ * \returns         `dst`
+ */
+ds_str ds_str_getline(ds_str str, const size_t size, FILE * fp);
+
 #endif      /*  PG_GENERAL_LEDGER_DS_STR_H  */
 
