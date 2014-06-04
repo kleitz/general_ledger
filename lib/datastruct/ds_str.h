@@ -68,6 +68,22 @@ void ds_str_destroy(ds_str str);
 void ds_str_destructor(void * str);
 
 /*!
+ * \brief           Assigns a string to another.
+ * \param dst       The destination string.
+ * \param src       The source string.
+ * \returns         `dst` on success, `NULL` on failure.
+ */
+ds_str ds_str_assign(ds_str dst, ds_str src);
+
+/*!
+ * \brief           Assigns a C-style string to a string.
+ * \param dst       The destination string.
+ * \param src       The source C-style string.
+ * \returns         `dst` on success, `NULL` on failure.
+ */
+ds_str ds_str_assign_cstr(ds_str dst, const char * src);
+
+/*!
  * \brief           Returns a C-style string containing the string's contents.
  * \param str       The string.
  * \returns         The C-style string containing the string's contents. The
@@ -122,6 +138,15 @@ unsigned long ds_str_hash(struct ds_str * str);
  * respectively, to be less than, equal to, or greater than s2.
  */
 int ds_str_compare(ds_str s1, ds_str s2);
+
+/*!
+ * \brief           Returns index of first occurence of a character.
+ * \param str       The string.
+ * \param ch        The character for which to search.
+ * \returns         The index of the first occurence, or -1 if the character
+ * was not found.
+ */
+int ds_str_strchr(ds_str str, const char ch);
 
 /*!
  * \brief           Returns a left substring.
@@ -182,6 +207,34 @@ char ds_str_char_at_index(ds_str str, const size_t index);
  * \returns         `true` is the string is empty, `false` otherwise.
  */
 bool ds_str_is_empty(ds_str str);
+
+/*!
+ * \brief           Clears (empties) a string.
+ * \param str       The string.
+ */
+void ds_str_clear(ds_str str);
+
+/*!
+ * \brief           Gets the integer value of a string.
+ * \param str       The string.
+ * \param base      The base of the integer. This has the same meaning as
+ * the third argument to standard C `strtol()`.
+ * \param value     A pointer to the integer in which to store the value.
+ * Zero is stored if the string does not contain a valid integer value.
+ * \returns         `true` on successful conversion, `false` if the string
+ * does not contain a valid integer value.
+ */
+bool ds_str_intval(ds_str str, const int base, int * value);
+
+/*!
+ * \brief           Gets the double value of a string.
+ * \param str       The string.
+ * \param value     A pointer to the double in which to store the value.
+ * Zero is stored if the string does not contain a valid double value.
+ * \returns         `true` on successful conversion, `false` if the string
+ * does not contain a valid double value.
+ */
+bool ds_str_doubleval(ds_str str, double * value);
 
 #endif      /*  PG_GENERAL_LEDGER_DS_STR_H  */
 

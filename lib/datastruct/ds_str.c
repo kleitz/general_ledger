@@ -24,6 +24,19 @@ struct ds_str {
 };
 
 /*!
+ * \brief           Assigns a C-style string to a string with length.
+ * \details         Providing the length avoids a call to `strlen()`, which
+ * is more efficient if the length is already known.
+ * \param dst       The string to which to assign.
+ * \param src       The C-style string to be assigned.
+ * \param length    The length of `src`, excluding the terminating null.
+ * \returns         `dst` on success, `NULL` on failure.
+ */
+static ds_str ds_str_assign_cstr_length(ds_str dst,
+                                        const char * src,
+                                        const size_t length);
+
+/*!
  * \brief           Duplicates a C-style string.
  * \details         This can be used in place of POSIX's `strdup()`.
  * \param src       The string to duplicate.
@@ -44,7 +57,7 @@ static char * duplicate_cstr(const char * src, size_t * length);
  * \returns             `true` if the capacity was successfully changed,
  * `false` otherwise.
  */
-static bool change_capacity(struct ds_str * str, const size_t new_capacity);
+static bool change_capacity(ds_str str, const size_t new_capacity);
 
 /*!
  * \brief                   Changes the capacity of a string if needed.
@@ -57,7 +70,7 @@ static bool change_capacity(struct ds_str * str, const size_t new_capacity);
  * or if no change was needed, `false` if a capacity change was needed but
  * was not successful.
  */
-static bool change_capacity_if_needed(struct ds_str * str,
+static bool change_capacity_if_needed(ds_str str,
                                       const size_t required_capacity);
 
 /*!
@@ -69,7 +82,20 @@ static bool change_capacity_if_needed(struct ds_str * str,
  * of the string.
  * \param str       The string.
  */
-static void truncate_if_needed(struct ds_str * str);
+static void truncate_if_needed(ds_str str);
+
+/*!
+ * \brief           Concatenates a C-style string to a string, with length.
+ * \details         Passing the length avoids the need to call `strlen()`,
+ * which is more efficient when we already know the length.
+ * \param dst       The destination string.
+ * \param src       The C-style string to concentate with `dst`.
+ * \param length    The length of `src`, not including the terminating null.
+ * \returns         `dst` on success, `NULL` on failure.
+ */
+static ds_str ds_str_concat_cstr_size(ds_str dst,
+                                      const char * src,
+                                      const size_t src_length);
 
 /*!
  * \brief           Removes characters at the start of a string, in place.
@@ -85,62 +111,10 @@ static void ds_str_remove_left(ds_str str, const size_t numchars);
  */
 static void ds_str_remove_right(ds_str str, const size_t numchars);
 
-struct ds_str * ds_str_create(const char * init_str) {
-    struct ds_str * new_str = malloc(sizeof *new_str);
-    if ( !new_str ) {
-        return NULL;
-    }
-
-    new_str->data = duplicate_cstr(init_str, &new_str->length);
-    if ( !new_str->data ) {
-        free(new_str);
-        return NULL;
-    }
-    new_str->capacity = new_str->length + 1;
-
-    return new_str;
-}
-
-struct ds_str * ds_str_dup(struct ds_str * src) {
-    assert(src);
-
-    return ds_str_create(src->data);
-}
-
-struct ds_str * ds_str_create_sprintf(const char * format, ...) {
-    assert(format);
-
-    /*  Determine amount of memory needed  */
-
-    char dummy_buffer[1];
-    va_list ap;
-    va_start(ap, format);
-    size_t num_written = vsnprintf(dummy_buffer, 1, format, ap);
-    va_end(ap);
-
-    /*  Allocate memory and write  */
-
-    const size_t required_alloc = num_written + 1;
-    char * new_data = malloc(required_alloc);
-    if ( !new_data ) {
-        return NULL;
-    }
-
-    va_start(ap, format);
-    num_written = vsnprintf(new_data, required_alloc, format, ap);
-    va_end(ap);
-
-    /*  Create and return new string  */
-
-    assert((num_written + 1) == required_alloc);
-    return ds_str_create_direct(new_data, required_alloc);
-}
-
- struct ds_str * ds_str_create_direct(char * init_str,
-                                      const size_t init_str_size) {
+ds_str ds_str_create_direct(char * init_str, const size_t init_str_size) {
     assert(init_str && init_str_size > 0);
 
-    struct ds_str * new_str = malloc(sizeof *new_str);
+    ds_str new_str = malloc(sizeof *new_str);
     if ( !new_str ) {
         free(init_str);
         return NULL;
@@ -153,8 +127,55 @@ struct ds_str * ds_str_create_sprintf(const char * format, ...) {
     return new_str;
 }
 
-void ds_str_destroy(struct ds_str * str) {
+ds_str ds_str_create(const char * init_str) {
+    size_t length;
+    char * new_data = duplicate_cstr(init_str, &length);
+    if ( !new_data ) {
+        return NULL;
+    }
+    return ds_str_create_direct(new_data, length + 1);
+}
+
+ds_str ds_str_dup(ds_str src) {
+    return ds_str_create(src->data);
+}
+
+ds_str ds_str_create_sprintf(const char * format, ...) {
+    static char dummy_buffer[1];
+
+    /*  Determine amount of memory needed  */
+
+    va_list ap;
+    va_start(ap, format);
+    size_t num_written = vsnprintf(dummy_buffer, 1, format, ap);
+    va_end(ap);
+
+    /*  Allocate correct amount of memory  */
+
+    const size_t required_alloc = num_written + 1;
+    char * new_data = malloc(required_alloc);
+    if ( !new_data ) {
+        return NULL;
+    }
+
+    /*  Write formatted string  */
+
+    va_start(ap, format);
+    num_written = vsnprintf(new_data, required_alloc, format, ap);
+    va_end(ap);
+
+    /*  Create and return new string  */
+
+    assert((num_written + 1) == required_alloc);
+    return ds_str_create_direct(new_data, required_alloc);
+}
+
+void ds_str_destroy(ds_str str) {
     if ( str ) {
+
+        /*  Debug sanity check  */
+        assert(strlen(str->data) == str->length);
+
         free(str->data);
         free(str);
     }
@@ -164,56 +185,42 @@ void ds_str_destructor(void * str) {
     ds_str_destroy(str);
 }
 
-const char * ds_str_cstr(struct ds_str * str) {
+ds_str ds_str_assign(ds_str dst, ds_str src) {
+    return ds_str_assign_cstr_length(dst, src->data, src->length);
+}
+
+ds_str ds_str_assign_cstr(ds_str dst, const char * src) {
+    return ds_str_assign_cstr_length(dst, src, strlen(src));
+}
+
+const char * ds_str_cstr(ds_str str) {
     return str->data;
 }
 
-size_t ds_str_length(struct ds_str * str) {
+size_t ds_str_length(ds_str str) {
     return str->length;
 }
 
-struct ds_str * ds_str_size_to_fit(struct ds_str * str) {
-    assert(str);
-
+ds_str ds_str_size_to_fit(ds_str str) {
     const size_t max_capacity = str->length + 1;
     if ( str->capacity > max_capacity ) {
-        if ( change_capacity(str, max_capacity) ) {
-            return str;
+        if ( !change_capacity(str, max_capacity) ) {
+            return NULL;
         }
     }
 
-    return NULL;
+    return str;
 }
 
-struct ds_str * ds_str_concat(struct ds_str * dst, struct ds_str * src) {
-    assert(dst && src);
-
-    const size_t req_cap = dst->length + src->length + 1;
-    if ( !change_capacity_if_needed(dst, req_cap) ) {
-        return NULL;
-    }
-    memcpy(dst->data + dst->length, src->data, src->length + 1);
-    dst->length += src->length;
-    return dst;
+ds_str ds_str_concat(ds_str dst, ds_str src) {
+    return ds_str_concat_cstr_size(dst, src->data, src->length);
 }
 
-struct ds_str * ds_str_concat_cstr(struct ds_str * dst, const char * src) {
-    assert(dst && src);
-
-    ds_str src_str = ds_str_create(src);
-    if ( !src_str ) {
-        return NULL;
-    }
-
-    ds_str return_str = ds_str_concat(dst, src_str);
-    ds_str_destroy(src_str);
-
-    return return_str;
+ds_str ds_str_concat_cstr(ds_str dst, const char * src) {
+    return ds_str_concat_cstr_size(dst, src, strlen(src));
 }
 
-struct ds_str * ds_str_trunc(struct ds_str * str, const size_t length) {
-    assert(str);
-
+ds_str ds_str_trunc(ds_str str, const size_t length) {
     const size_t new_capacity = length + 1;
     if ( new_capacity < str->capacity ) {
         if ( !change_capacity(str, new_capacity) ) {
@@ -224,7 +231,7 @@ struct ds_str * ds_str_trunc(struct ds_str * str, const size_t length) {
     return str;
 }
 
-unsigned long ds_str_hash(struct ds_str * str) {
+unsigned long ds_str_hash(ds_str str) {
     unsigned long hash = 5381;
     int c;
     const char * c_str = str->data;
@@ -240,6 +247,14 @@ int ds_str_compare(ds_str s1, ds_str s2) {
     return strcmp(ds_str_cstr(s1), ds_str_cstr(s2));
 }
 
+int ds_str_strchr(ds_str str, const char ch) {
+    int i = 0;
+    while ( str->data[i] && str->data[i] != ch ) {
+        ++i;
+    }
+    return str->data[i] ? i : -1;
+}
+
 ds_str ds_str_substr_left(ds_str str, const size_t numchars) {
     ds_str new_substr = ds_str_dup(str);
     ds_str_remove_right(new_substr, new_substr->length - numchars);
@@ -253,15 +268,8 @@ ds_str ds_str_substr_right(ds_str str, const size_t numchars) {
 }
 
 void ds_str_split(ds_str src, ds_str * left, ds_str * right, const char sc) {
-    const char * cptr = src->data;
-
-    size_t idx = 0;
-    while ( *cptr && *cptr != sc ) {
-        ++cptr;
-        ++idx;
-    }
-
-    if ( !*cptr ) {
+    int idx = ds_str_strchr(src, sc);
+    if ( idx == -1 ) {
         *left = NULL;
         *right = NULL;
     }
@@ -272,8 +280,6 @@ void ds_str_split(ds_str src, ds_str * left, ds_str * right, const char sc) {
 }
  
 void ds_str_trim_leading(ds_str str) {
-    assert(str);
-
     size_t i = 0;
     while ( str->data[i] && isspace(str->data[i]) ) {
         ++i;
@@ -300,20 +306,58 @@ void ds_str_trim(ds_str str) {
 }
 
 char ds_str_char_at_index(ds_str str, const size_t index) {
-    assert(str && index < str->length);
-
     return str->data[index];
 }
 
 bool ds_str_is_empty(ds_str str) {
-    assert(str);
-
     return str->length == 0;
 }
 
-static char * duplicate_cstr(const char * src, size_t * length) {
-    assert(src);
+void ds_str_clear(ds_str str) {
+    str->data[0] = '\0';
+    str->length = 0;
+}
 
+bool ds_str_intval(ds_str str, const int base, int * value) {
+    char * endptr;
+    const long n = strtol(str->data, &endptr, base);
+    if ( *endptr ) {
+        *value = 0;
+        return false;
+    }
+    else {
+        *value = (int) n;
+        return true;
+    }
+}
+
+bool ds_str_doubleval(ds_str str, double * value) {
+    char * endptr;
+    const double n = strtod(str->data, &endptr);
+    if ( *endptr ) {
+        *value = 0;
+        return false;
+    }
+    else {
+        *value = n;
+        return true;
+    }
+}
+
+static ds_str ds_str_assign_cstr_length(ds_str dst,
+                                        const char * src,
+                                        const size_t length) {
+    const size_t req_cap = length + 1;
+    if ( !change_capacity_if_needed(dst, req_cap) ) {
+        return NULL;
+    }
+
+    memcpy(dst->data, src, req_cap);
+    dst->length = length;
+    return dst;
+}
+
+static char * duplicate_cstr(const char * src, size_t * length) {
     const size_t src_length = strlen(src);
     char * new_str = malloc(src_length + 1);
     if ( !new_str ) {
@@ -328,8 +372,8 @@ static char * duplicate_cstr(const char * src, size_t * length) {
     return new_str;
 }
 
-static bool change_capacity(struct ds_str * str, const size_t new_capacity) {
-    assert(str && new_capacity > 0);
+static bool change_capacity(ds_str str, const size_t new_capacity) {
+    assert(new_capacity > 0);
 
     bool did_reallocate = true;
 
@@ -346,9 +390,9 @@ static bool change_capacity(struct ds_str * str, const size_t new_capacity) {
     return did_reallocate;
 }
 
-static bool change_capacity_if_needed(struct ds_str * str,
+static bool change_capacity_if_needed(ds_str str,
                                       const size_t required_capacity) {
-    assert(str && required_capacity > 0);
+    assert(required_capacity > 0);
 
     if ( required_capacity > str->capacity ) {
         return change_capacity(str, required_capacity);
@@ -357,13 +401,23 @@ static bool change_capacity_if_needed(struct ds_str * str,
     return false;
 }
 
-static void truncate_if_needed(struct ds_str * str) {
-    assert(str);
-
+static void truncate_if_needed(ds_str str) {
     if ( str->length >= str->capacity ) {
         str->length = str->capacity - 1;
         str->data[str->length] = '\0';
     }
+}
+
+static ds_str ds_str_concat_cstr_size(ds_str dst,
+                                      const char * src,
+                                      const size_t src_length) {
+    const size_t req_cap = dst->length + src_length + 1;
+    if ( !change_capacity_if_needed(dst, req_cap) ) {
+        return NULL;
+    }
+    memcpy(dst->data + dst->length, src, src_length + 1);
+    dst->length += src_length;
+    return dst;
 }
 
 static void ds_str_remove_right(ds_str str, const size_t numchars) {

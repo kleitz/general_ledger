@@ -29,8 +29,8 @@ void test_functionality(void);
  */
 
 int main(int argc, char ** argv) {
-    //test_functionality();
-    //return 0;
+    test_functionality();
+    return 0;
 
     gl_set_logging(true);
 
@@ -196,6 +196,41 @@ void test_functionality(void) {
         printf("unt3 is not empty.\n");
     }
 
+    ds_str str1 = ds_str_create("Hello, ");
+    ds_str_concat_cstr(str1, "world!");
+    printf("Concatenated: [%s] (%zu)\n", ds_str_cstr(str1), ds_str_length(str1));
+
+    printf("Index of 'r': %d\n", ds_str_strchr(str1, 'r'));
+
+    ds_str str3 = ds_str_create("Hello, world!");
+    printf("Before assign: [%s] (%zu)\n", ds_str_cstr(str3),
+                                          ds_str_length(str3));
+    ds_str_assign_cstr(str3, "Goodbye, world!");
+    printf("After assign: [%s] (%zu)\n", ds_str_cstr(str3),
+                                         ds_str_length(str3));
+    ds_str str4 = ds_str_create("Back to the world!");
+    ds_str_assign(str3, str4);
+    printf("After reassign: [%s] (%zu)\n", ds_str_cstr(str3),
+                                           ds_str_length(str3));
+
+    ds_str str5 = ds_str_create("1234");
+    int n1;
+    ds_str_intval(str5, 10, &n1);
+    ds_str str6 = ds_str_create("5678stuff");
+    int n2;
+    ds_str_intval(str6, 10, &n2);
+    printf("String: %s, int: %d\n", ds_str_cstr(str5), n1);
+    printf("String: %s, int: %d\n", ds_str_cstr(str6), n2);
+
+    ds_str str7 = ds_str_create("1234.5678");
+    double d1;
+    ds_str_doubleval(str7, &d1);
+    ds_str str8 = ds_str_create("9876.5432stuff");
+    double d2;
+    ds_str_doubleval(str8, &d2);
+    printf("String: %s, double: %.4f\n", ds_str_cstr(str7), d1);
+    printf("String: %s, double: %.4f\n", ds_str_cstr(str8), d2);
+
     ds_str_destroy(initial_string);
     ds_str_destroy(lss);
     ds_str_destroy(rss);
@@ -207,5 +242,12 @@ void test_functionality(void) {
     ds_str_destroy(unt1);
     ds_str_destroy(unt2);
     ds_str_destroy(unt3);
+    ds_str_destroy(str1);
+    ds_str_destroy(str3);
+    ds_str_destroy(str4);
+    ds_str_destroy(str5);
+    ds_str_destroy(str6);
+    ds_str_destroy(str7);
+    ds_str_destroy(str8);
 }
 
