@@ -6,7 +6,7 @@
  * of the GNU General Public License. <http://www.gnu.org/licenses/>
  */
 
-#define _XOPEN_SOURCE 500
+#define _XOPEN_SOURCE 600
 
 #include <stdio.h>
 #include <stdlib.h>

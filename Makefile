@@ -23,13 +23,12 @@ database     := mysql
 
 # Compiler flags
 CFLAGS  = -std=c99 -pedantic -Wall -Wextra
-CFLAGS += -I/usr/include/mysql -DBIG_JOINS=1 -fno-strict-aliasing -g
 CFLAGS += -Ilib
 C_DEBUG_FLAGS   := -ggdb -DDEBUG -DDEBUG_ALL
 C_RELEASE_FLAGS := -O3 -DNDEBUG
 
 # Linker flags
-LDFLAGS := -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -ldl
+LDFLAGS :=
 
 # Clean files and globs
 CLNGLOB=$(program) $(objects) $(libraries) $(depends)
