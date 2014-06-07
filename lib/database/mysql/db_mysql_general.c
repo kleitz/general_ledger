@@ -1,3 +1,11 @@
+/*!
+ * \file            db_mysql_general.c
+ * \brief           Implementation of MYSQL database functionality.
+ * \author          Paul Griffiths
+ * \copyright       Copyright 2014 Paul Griffiths. Distributed under the terms
+ * of the GNU General Public License. <http://www.gnu.org/licenses/>
+ */
+
 #include <my_global.h>
 #include <my_sys.h>
 #include <mysql.h>
@@ -7,13 +15,15 @@
 #include <string.h>
 
 #include "gl_general/gl_general.h"
-#include "database/database.h"
-#include "database/database_sql.h"
-#include "datastruct/data_structures.h"
+#include "database/db_internal.h"
 
+/*!  MYSQL initialization object.  */
 MYSQL * main_mss = NULL;
+
+/*!  MYSQL connection object.  */
 MYSQL * conn_mss = NULL;
 
+/*
 static void db_error_quit(const char * msg, MYSQL * mss) {
     if ( mss ) {
         gl_log_msg("%s: %s", msg, mysql_error(mss));
@@ -23,31 +33,32 @@ static void db_error_quit(const char * msg, MYSQL * mss) {
     }
     exit(EXIT_FAILURE);
 }
+*/
 
-static void db_error_msg(const char * msg, MYSQL * mss) {
-    if ( mss ) {
-        gl_log_msg("%s: %s", msg, mysql_error(mss));
-    }
-    else {
-        gl_log_msg("%s");
-    }
-}
+/*!
+ * \brief           Logs a MYSQL error message.
+ * \param msg       The plain error message to log.
+ * \param mss       The MYSQL connection from which to retrieve the MYSQL
+ * error message.
+ */
+static void db_error_msg(const char * msg, MYSQL * mss);
 
-void db_connect(const char * host, const char * database,
+bool db_connect(const char * host, const char * database,
                 const char * username, const char * password) {
     main_mss = mysql_init(NULL);
     if ( !main_mss ) {
-        db_error_quit("Couldn't initialize mysql.", NULL);
+        db_error_msg("Couldn't initialize mysql.", NULL);
+        return false;
     }
 
     conn_mss = mysql_real_connect(main_mss, host, username, password,
-            database, 0, NULL, 0);
+                                  database, 0, NULL, 0);
     if ( !conn_mss ) {
-        db_error_quit("Couldn't connect to database", main_mss);
+        db_error_msg("Couldn't connect to database", main_mss);
+        return false;
     }
-    else {
-        gl_log_msg("Connection was successful.");
-    }
+
+    return true;
 }
 
 void db_close(void) {
@@ -59,23 +70,21 @@ void db_close(void) {
     conn_mss = NULL;
 }
 
-int db_execute_query(const char * query) {
-    int ret_val;
+bool db_execute_query(const char * query) {
+    bool ret_val = false;
 
     if ( conn_mss ) {
         int status = mysql_query(conn_mss, query);
         if ( status ) {
             db_error_msg("Query unsuccessful", conn_mss);
-            ret_val = -1;
         }
         else {
             gl_log_msg("Query successful");
-            ret_val = 0;
+            ret_val = true;
         }
     }
     else {
         gl_log_msg("Attempting to write query with no connection.");
-        ret_val = -1;
     }
 
     return ret_val;
@@ -140,5 +149,14 @@ ds_recordset db_create_recordset_from_query(const char * query) {
     }
 
     return NULL;
+}
+
+static void db_error_msg(const char * msg, MYSQL * mss) {
+    if ( mss ) {
+        gl_log_msg("%s: %s", msg, mysql_error(mss));
+    }
+    else {
+        gl_log_msg("%s");
+    }
 }
 

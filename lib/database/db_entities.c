@@ -1,20 +1,22 @@
-#include <stdlib.h>
+/*!
+ * \file            db_entities.c
+ * \brief           Implementation of entities functionality.
+ * \author          Paul Griffiths
+ * \copyright       Copyright 2014 Paul Griffiths. Distributed under the terms
+ * of the GNU General Public License. <http://www.gnu.org/licenses/>
+ */
 
-#include "database/database.h"
-#include "database/database_sql.h"
-#include "database/db_entities.h"
-#include "datastruct/data_structures.h"
+#include "db_internal.h"
 
-int db_create_entities_table(void) {
+bool db_create_entities_table(void) {
     return db_execute_query(db_create_entities_table_sql());
 }
 
-int db_drop_entities_table(void) {
+bool db_drop_entities_table(void) {
     return db_execute_query(db_drop_entities_table_sql());
 }
 
 ds_str db_list_entities_report(void) {
-    const char * query = db_list_entities_report_sql();
-    return db_create_report_from_query(query);
+    return db_create_report_from_query(db_list_entities_report_sql());
 }
 

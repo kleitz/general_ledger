@@ -6,7 +6,7 @@
 #include <string.h>
 #include <getopt.h>
 #include "config.h"
-#include "config_file_read/config_file_read.h"
+#include "file_ops/file_ops.h"
 #include "datastruct/data_structures.h"
 #include "gl_general/gl_general.h"
 

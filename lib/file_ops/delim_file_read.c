@@ -42,14 +42,14 @@ static ds_record get_next_record(FILE * file, const char delim) {
     return result;
 }
 
-ds_recordset delim_file_read(const char * filename) {
+ds_recordset delim_file_read(const char * filename, const char delim) {
     FILE * delim_file = fopen(filename, "r");
     if ( !delim_file ) {
         gl_log_msg("Couldn't open log file '%s'.", filename);
         return NULL;
     }
 
-    ds_record headers = get_next_record(delim_file, ':');
+    ds_record headers = get_next_record(delim_file, delim);
     assert(headers);
     size_t num_fields = ds_record_size(headers);
 
@@ -62,7 +62,7 @@ ds_recordset delim_file_read(const char * filename) {
 
     ds_record row = NULL;
 
-    while ( (row = get_next_record(delim_file, ':')) ) {
+    while ( (row = get_next_record(delim_file, delim)) ) {
         if ( ds_record_size(row) != num_fields ) {
             ds_recordset_destroy(set);
             return NULL;

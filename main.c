@@ -14,7 +14,7 @@
 #include "database/database.h"
 #include "config.h"
 #include "datastruct/data_structures.h"
-#include "delim_file_read/delim_file_read.h"
+#include "file_ops/file_ops.h"
 
 ds_str login(void);
 void print_usage_message(char * progname);
