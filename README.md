@@ -4,7 +4,8 @@ general_ledger
 What is it?
 -----------
 
-**general_ledger** is C project.
+**general_ledger** will be a fully-featured, open-source general ledger
+system.
 
 Who maintains it?
 -----------------
@@ -22,7 +23,7 @@ Up-to-date documentation can be found at
 
 Installation
 ------------
-**general_ledger** is written in C.
+**general_ledger** is written in C. Type `make` to build.
 
 Licensing
 ---------
@@ -30,5 +31,6 @@ Please see the file called LICENSE.
 
 Contacts
 --------
-* If you have a concrete bug report for **general_ledger** please go to the GitHub
-issue tracker at <https://github.com/paulgriffiths/general_ledger/issues>.
+* If you have a concrete bug report for **general_ledger** please go to the
+GitHub issue tracker at
+<https://github.com/paulgriffiths/general_ledger/issues>.
