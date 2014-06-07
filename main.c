@@ -63,9 +63,9 @@ int main(int argc, char ** argv) {
     gl_set_logging(true);
 
     struct params * params = params_init();
-    int status = get_cmdline_options(argc, argv, params);
+    bool status = get_cmdline_options(argc, argv, params);
 
-    if ( status ) {
+    if ( !status ) {
         print_usage_message(argv[0]);
     }
     else if ( params->help ) {
@@ -77,7 +77,7 @@ int main(int argc, char ** argv) {
     else if ( params->create || params->list_users ||
               params->delete_data || params->sample ||
               params->list_entities ) {
-        if ( get_configuration(params) ) {
+        if ( !get_configuration(params) ) {
             gl_log_msg("Couldn't get parameters.");
         }
         else {
@@ -126,25 +126,15 @@ int main(int argc, char ** argv) {
 }
 
 ds_str login(void) {
-    char buffer[30] = {0};
-    ds_str passwd = NULL;
+    ds_str passwd = ds_str_create("");
 
     printf("Enter password (*WILL BE VISIBLE*): ");
     fflush(stdout);
 
-    if ( fgets(buffer, 30, stdin) ) {
-        size_t length = strlen(buffer);
-        if ( length && buffer[length - 1] == '\n' ) {
-            buffer[length - 1] = '\0';
-        }
-
-        passwd = ds_str_create(buffer);
-        if ( !passwd ) {
-            gl_log_msg("Couldn't allocate memory for password.");
-        }
-    }
-    else {
+    if ( !ds_str_getline(passwd, 80, stdin) ) {
+        ds_str_destroy(passwd);
         gl_log_msg("Couldn't get password.");
+        return NULL;
     }
 
     return passwd;
