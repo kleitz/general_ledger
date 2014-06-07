@@ -9,7 +9,7 @@
 const char * db_list_entities_report_sql(void) {
     static const char * query = 
         "SELECT"
-        "  id AS 'User ID',"
+        "  id AS 'Entity ID',"
         "  name AS 'Entity Name',"
         "  currency AS 'Currency',"
         "  parent AS 'Parent'"
