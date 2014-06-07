@@ -29,8 +29,8 @@ void test_functionality(void);
  */
 
 int main(int argc, char ** argv) {
-    //test_functionality();
-    //return 0;
+    test_functionality();
+    return 0;
 
     gl_set_logging(true);
 
@@ -200,7 +200,7 @@ void test_functionality(void) {
     ds_str_concat_cstr(str1, "world!");
     printf("Concatenated: [%s] (%zu)\n", ds_str_cstr(str1), ds_str_length(str1));
 
-    printf("Index of 'r': %d\n", ds_str_strchr(str1, 'r'));
+    printf("Index of 'r': %d\n", ds_str_strchr(str1, 'r', 0));
 
     ds_str str3 = ds_str_create("Hello, world!");
     printf("Before assign: [%s] (%zu)\n", ds_str_cstr(str3),
@@ -231,6 +231,17 @@ void test_functionality(void) {
     printf("String: %s, double: %.4f\n", ds_str_cstr(str7), d1);
     printf("String: %s, double: %.4f\n", ds_str_cstr(str8), d2);
 
+    ds_str list = ds_str_create("token1:token2:token3:token4");
+    ds_record tized = ds_record_tokenize(list, ':');
+    for ( size_t i = 0; i < ds_record_size(tized); ++i ) {
+        ds_str token = ds_record_get_field(tized, i);
+        printf("Token %zu: %s\n", i + 1, ds_str_cstr(token));
+    }
+    ds_str tokenized = ds_record_make_delim_string(tized, ':');
+    printf("Tokenized again: [%s]\n", ds_str_cstr(tokenized));
+    ds_record_destroy(tized);
+
+                
     ds_str_destroy(initial_string);
     ds_str_destroy(lss);
     ds_str_destroy(rss);
@@ -249,5 +260,7 @@ void test_functionality(void) {
     ds_str_destroy(str6);
     ds_str_destroy(str7);
     ds_str_destroy(str8);
+    ds_str_destroy(list);
+    ds_str_destroy(tokenized);
 }
 

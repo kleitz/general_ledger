@@ -84,5 +84,21 @@ void ds_record_seek_start(ds_record record);
  */
 ds_str ds_record_get_next_data(ds_record record);
 
+/*!
+ * \brief           Tokenizes a string into a record.
+ * \param str       The string to tokenize.
+ * \param delim     The delimiting character.
+ * \returns         A new record containing the tokens.
+ */
+ds_record ds_record_tokenize(ds_str str, const char delim);
+
+/*!
+ * \brief           Makes a delimited string from a record.
+ * \param record    The record.
+ * \param delim     The delimiting character.
+ * \returns         The delimited string, or `NULL` on failure.
+ */
+ds_str ds_record_make_delim_string(ds_record record, const char delim);
+
 #endif      /*  PG_GENERAL_LEDGER_DS_RECORD_H  */
 

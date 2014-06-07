@@ -261,8 +261,10 @@ int ds_str_compare(ds_str s1, ds_str s2) {
     return strcmp(ds_str_cstr(s1), ds_str_cstr(s2));
 }
 
-int ds_str_strchr(ds_str str, const char ch) {
-    int i = 0;
+int ds_str_strchr(ds_str str, const char ch, const int start) {
+    assert(start < (int) str->length);
+
+    int i = start;
     while ( str->data[i] && str->data[i] != ch ) {
         ++i;
     }
@@ -282,9 +284,9 @@ ds_str ds_str_substr_right(ds_str str, const size_t numchars) {
 }
 
 void ds_str_split(ds_str src, ds_str * left, ds_str * right, const char sc) {
-    int idx = ds_str_strchr(src, sc);
+    int idx = ds_str_strchr(src, sc, 0);
     if ( idx == -1 ) {
-        *left = NULL;
+        *left = ds_str_dup(src);
         *right = NULL;
     }
     else {

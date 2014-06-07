@@ -144,10 +144,13 @@ int ds_str_compare(ds_str s1, ds_str s2);
  * \brief           Returns index of first occurence of a character.
  * \param str       The string.
  * \param ch        The character for which to search.
+ * \param start     The index of the string at which to start looking. Set
+ * this to non-zero to begin searching from a point other than the first
+ * character of the string.
  * \returns         The index of the first occurence, or -1 if the character
  * was not found.
  */
-int ds_str_strchr(ds_str str, const char ch);
+int ds_str_strchr(ds_str str, const char ch, const int start);
 
 /*!
  * \brief           Returns a left substring.

@@ -82,3 +82,42 @@ ds_str ds_record_get_next_data(struct ds_record * record) {
     return ds_vector_get_next_data(record->fields);
 }
 
+ds_record ds_record_tokenize(ds_str str, const char delim) {
+    if ( ds_str_is_empty(str) ) {
+        return NULL;
+    }
+
+    ds_list field_list = ds_list_create(false, NULL);
+    
+    ds_str src = ds_str_dup(str);
+    ds_str left, right;
+    do {
+        ds_str_split(src, &left, &right, delim);
+        ds_list_append(field_list, left);
+        ds_str_destroy(src);
+        src = right;
+    } while ( src );
+
+    ds_record record = ds_record_create(ds_list_length(field_list));
+    ds_list_seek_start(field_list);
+    ds_str cur_field;
+    for ( size_t i = 0; (cur_field = ds_list_get_next_data(field_list)); ++i ) {
+        ds_record_set_field(record, i, cur_field);
+    }
+
+    ds_list_destroy(field_list);
+
+    return record;
+}
+
+ds_str ds_record_make_delim_string(ds_record record, const char delim) {
+    ds_str result = ds_str_dup(ds_record_get_field(record, 0));
+    ds_str delim_str = ds_str_create_sprintf("%c", delim);
+    for ( size_t i = 1; i < ds_record_size(record); ++i ) {
+        ds_str_concat(result, delim_str);
+        ds_str_concat(result, ds_record_get_field(record, i));
+    }
+    ds_str_destroy(delim_str);
+
+    return result;
+}
