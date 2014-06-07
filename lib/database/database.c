@@ -27,19 +27,19 @@ int db_load_sample_data(void) {
 
 int db_add_sample_data(const char * table, const char * filename) {
     int ret_val = 0;
-    ds_result_set data = delim_file_read(filename);
-    ds_result_set_seek_start(data);
-    char * query;
-    while ( (query = ds_result_set_get_next_insert_query(data, table)) ) {
-        ret_val = db_execute_query(query);
-        free(query);
+    ds_recordset data = delim_file_read(filename);
+    ds_recordset_seek_start(data);
+    ds_str query;
+    while ( (query = ds_recordset_get_next_insert_query(data, table)) ) {
+        ret_val = db_execute_query(ds_str_cstr(query));
+        ds_str_destroy(query);
         if ( ret_val ) {
-            ds_result_set_destroy(data);
+            ds_recordset_destroy(data);
             return ret_val;
         }
     }
 
-    ds_result_set_destroy(data);
+    ds_recordset_destroy(data);
     return 0;
 }
 
@@ -49,3 +49,4 @@ ds_str db_create_report_from_query(const char * query) {
     ds_recordset_destroy(results);
     return report;
 }
+

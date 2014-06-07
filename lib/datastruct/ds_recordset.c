@@ -221,62 +221,27 @@ ds_record ds_recordset_next_record(struct ds_recordset * set) {
     assert(set);
     return ds_list_get_next_data(set->records);
 }
-/*
-char * ds_recordset_get_next_insert_query(struct ds_recordset * set,
+
+ds_str ds_recordset_get_next_insert_query(struct ds_recordset * set,
                                            const char * table_name) {
     static char basic_query[] = "INSERT INTO %s (%s) VALUES (%s)";
-    ds_list record = ds_recordset_next_record(set);
+    ds_record record = ds_recordset_next_record(set);
     if ( !record ) {
         return NULL;
     }
 
-    char * headers = ds_recordset_get_cs_line_from_record(set,
-            set->headers, false);
-    char * values = ds_recordset_get_cs_line_from_record(set,
-            record, true);
-    size_t query_len = sizeof(basic_query) + strlen(table_name) +
-                       strlen(headers) + strlen(values);
+    ds_str headers_line = ds_record_make_delim_string(set->headers, ',');
+    ds_str record_line = ds_record_make_values_string(record);
+    ds_str query_string = ds_str_create_sprintf(basic_query,
+            table_name,
+            ds_str_cstr(headers_line),
+            ds_str_cstr(record_line));
+    ds_str_destroy(headers_line);
+    ds_str_destroy(record_line);
 
-    char * line = malloc(query_len);
-    if ( !line ) {
-        return NULL;
-    }
-
-    sprintf(line, basic_query, table_name, headers, values);
-    free(headers);
-    free(values);
-
-    return line;
+    return query_string;
 }
 
-static char * ds_recordset_get_cs_line_from_record(struct ds_recordset * set,
-                                                 struct ds_list * record,
-                                                 const bool squote) {
-    assert(set);
-
-    size_t line_len = ds_recordset_get_total_field_length(set);
-    line_len += ds_recordset_num_fields(set) * 3;
-    char * line = calloc(line_len, 1);
-    if ( !line ) {
-        return NULL;
-    }
-
-    ds_list_seek_start(record);
-    char * line_ptr = line;
-    for ( size_t i = 0; i < set->num_fields; ++i ) {
-        char * field = ds_list_get_next_data(record);
-        char * comma = (i == 0) ? "" : ",";
-        char * quote = (squote) ? "'" : "";
-        sprintf(line_ptr, "%s%s%s%s", comma, quote, field, quote);
-        line_ptr += strlen(field) +
-                    ((i == 0) ? 0 : 1) +
-                    (squote ? 2 : 0);
-    }
-
-    return line;
-}
-
-*/
 static ds_str ds_recordset_get_line_from_record(struct ds_recordset * set,
                                                 ds_record record) {
     assert(set && record);

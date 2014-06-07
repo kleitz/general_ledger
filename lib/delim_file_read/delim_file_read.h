@@ -9,7 +9,7 @@
 #ifndef PG_GENERAL_LEDGER_DELIM_FILE_READ_H
 #define PG_GENERAL_LEDGER_DELIM_FILE_READ_H
 
-#include "datastruct/ds_result_set.h"
+#include "datastruct/data_structures.h"
 
 /*!  Return status for success  */
 #define DELIM_FILE_OK 0
@@ -27,7 +27,7 @@
  * specified file could not be opened for reading, DELIM_FILE_MALFORMED_FILE
  * if the delimited file was improperly formed.
  */
-ds_result_set delim_file_read(const char * filename);
+ds_recordset delim_file_read(const char * filename);
 
 /*!
  * \brief           Frees the resources used by this module.

@@ -16,7 +16,6 @@
 #include "ds_map_str.h"
 #include "ds_record.h"
 #include "ds_recordset.h"
-#include "ds_result_set.h"
 
 #endif      /*  PG_GENERAL_LEDGER_DATA_STRUCTURES_H  */
 
