@@ -141,6 +141,15 @@ unsigned long ds_str_hash(struct ds_str * str);
 int ds_str_compare(ds_str s1, ds_str s2);
 
 /*!
+ * \brief           Compares a string with a C-style string.
+ * \param s1        The first string.
+ * \param s2        The second, C-Style string.
+ * \returns         Less than, equal to, or greater than zero if s1 is found,
+ * respectively, to be less than, equal to, or greater than s2.
+ */
+int ds_str_compare_cstr(ds_str s1, const char * s2);
+
+/*!
  * \brief           Returns index of first occurence of a character.
  * \param str       The string.
  * \param ch        The character for which to search.
@@ -249,6 +258,16 @@ bool ds_str_doubleval(ds_str str, double * value);
  * \returns         `dst`
  */
 ds_str ds_str_getline(ds_str str, const size_t size, FILE * fp);
+
+/*!
+ * \brief           Brackets a string with decoration strings.
+ * \param str       The string to decorate.
+ * \param left_dec  The string to add to the left of `str`.
+ * \param right_dec The string to add to the right of `str`, or `NULL`
+ * to add `left_dec` to both sides.
+ * \returns         The decorated string.
+ */
+ds_str ds_str_decorate(ds_str str, ds_str left_dec, ds_str right_dec);
 
 #endif      /*  PG_GENERAL_LEDGER_DS_STR_H  */
 

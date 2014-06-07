@@ -261,6 +261,10 @@ int ds_str_compare(ds_str s1, ds_str s2) {
     return strcmp(ds_str_cstr(s1), ds_str_cstr(s2));
 }
 
+int ds_str_compare_cstr(ds_str s1, const char * s2) {
+    return strcmp(ds_str_cstr(s1), s2);
+}
+
 int ds_str_strchr(ds_str str, const char ch, const int start) {
     assert(start < (int) str->length);
 
@@ -377,6 +381,23 @@ ds_str ds_str_getline(ds_str str, const size_t size, FILE * fp) {
         --length;
     }
     return ds_str_assign_cstr_direct(str, buffer, size, length);
+}
+
+ds_str ds_str_decorate(ds_str str, ds_str left_dec, ds_str right_dec) {
+    ds_str result;
+    if ( right_dec ) {
+        result = ds_str_create_sprintf("%s%s%s",
+                                       ds_str_cstr(left_dec),
+                                       ds_str_cstr(str),
+                                       ds_str_cstr(right_dec));
+    }
+    else {
+        result = ds_str_create_sprintf("%s%s%s",
+                                       ds_str_cstr(left_dec),
+                                       ds_str_cstr(str),
+                                       ds_str_cstr(left_dec));
+    }
+    return result;
 }
 
 static ds_str ds_str_assign_cstr_direct(ds_str dst,

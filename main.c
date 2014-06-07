@@ -239,9 +239,30 @@ void test_functionality(void) {
     }
     ds_str tokenized = ds_record_make_delim_string(tized, ':');
     printf("Tokenized again: [%s]\n", ds_str_cstr(tokenized));
+    ds_str_destroy(tokenized);
+    tokenized = ds_record_make_values_string(tized);
+    printf("To values string: [%s]\n", ds_str_cstr(tokenized));
+    ds_str_destroy(tokenized);
     ds_record_destroy(tized);
 
+    ds_str str9 = ds_str_create("Test string");
+    if ( !ds_str_compare_cstr(str9, "Test string") ) {
+        printf("OK! Strings compare equal.\n");
+    }
+    else {
+        printf("Not OK! Strings do not compare equal.\n");
+    }
                 
+    ds_str ld = ds_str_create("<tag>");
+    ds_str rd = ds_str_create("</tag>");
+    ds_str contents = ds_str_create("contents");
+
+    ds_str tag1 = ds_str_decorate(contents, ld, rd);
+    ds_str tag2 = ds_str_decorate(contents, ld, NULL);
+
+    printf("Decorated 1: %s\n", ds_str_cstr(tag1));
+    printf("Decorated 2: %s\n", ds_str_cstr(tag2));
+
     ds_str_destroy(initial_string);
     ds_str_destroy(lss);
     ds_str_destroy(rss);
@@ -260,7 +281,12 @@ void test_functionality(void) {
     ds_str_destroy(str6);
     ds_str_destroy(str7);
     ds_str_destroy(str8);
+    ds_str_destroy(str9);
     ds_str_destroy(list);
-    ds_str_destroy(tokenized);
+    ds_str_destroy(ld);
+    ds_str_destroy(rd);
+    ds_str_destroy(contents);
+    ds_str_destroy(tag1);
+    ds_str_destroy(tag2);
 }
 

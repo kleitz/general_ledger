@@ -100,5 +100,12 @@ ds_record ds_record_tokenize(ds_str str, const char delim);
  */
 ds_str ds_record_make_delim_string(ds_record record, const char delim);
 
+/*!
+ * \brief           Makes a delimited SQL values string from a record.
+ * \param record    The record.
+ * \returns         The delimited values string, or `NULL` on failure.
+ */
+ds_str ds_record_make_values_string(ds_record record);
+
 #endif      /*  PG_GENERAL_LEDGER_DS_RECORD_H  */
 

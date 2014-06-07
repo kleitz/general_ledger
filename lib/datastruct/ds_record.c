@@ -121,3 +121,23 @@ ds_str ds_record_make_delim_string(ds_record record, const char delim) {
 
     return result;
 }
+
+ds_str ds_record_make_values_string(ds_record record) {
+    ds_str quote_str = ds_str_create("'");
+    ds_str delim_str = ds_str_create(",");
+    ds_str result = ds_str_decorate(ds_record_get_field(record, 0),
+                                    quote_str, NULL);
+    for ( size_t i = 1; i < ds_record_size(record); ++i ) {
+        ds_str_concat(result, delim_str);
+        ds_str quoted_field = ds_str_decorate(ds_record_get_field(record, i),
+                                              quote_str, NULL);
+        ds_str_concat(result, quoted_field);
+        ds_str_destroy(quoted_field);
+    }
+    ds_str_destroy(delim_str);
+    ds_str_destroy(quote_str);
+
+    return result;
+}
+
+
