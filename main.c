@@ -16,21 +16,49 @@
 #include "datastruct/data_structures.h"
 #include "file_ops/file_ops.h"
 
+/*!
+ * \brief           Logs a user in and retrieves the password.
+ * \returns         The password.
+ */
 ds_str login(void);
+
+/*!
+ * \brief           Prints a program usage message.
+ * \param progname  The program name.
+ */
 void print_usage_message(char * progname);
+
+/*!
+ * \brief           Prints a program version message.
+ * \param progname  The program name.
+ */
 void print_version_message(char * progname);
+
+/*!
+ * \brief           Prints a program help message.
+ * \param progname  The program name.
+ */
 void print_help_message(char * progname);
+
+/*!
+ * \brief           Casual test function.
+ * \details         Used for casually testing program functionality.
+ */
 void test_functionality(void);
+
+/*!  Casual testing flag  */
+static const bool testing = false;
 
 /*!
  * \brief       Main function.
  * \details     Main function.
  * \returns     Exit status.
  */
-
 int main(int argc, char ** argv) {
-    //test_functionality();
-    //return 0;
+    if ( testing ) {
+        test_functionality();
+        return 0;
+    } 
 
     gl_set_logging(true);
 

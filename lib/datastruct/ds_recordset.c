@@ -35,7 +35,7 @@ struct ds_recordset {
  * \param set       The result set.
  * \param record    The record to check.
  */
-static void ds_recordset_update_field_lengths(struct ds_recordset * set,
+static void ds_recordset_update_field_lengths(ds_recordset set,
                                                ds_record record);
 
 /*!
@@ -49,14 +49,14 @@ static void ds_recordset_update_field_lengths(struct ds_recordset * set,
  * \param set       The results set.
  * \returns         The required length of a record text line.
  */
-static size_t ds_recordset_get_record_line_length(struct ds_recordset * set);
+static size_t ds_recordset_get_record_line_length(ds_recordset set);
 
 /*!
  * \brief           Returns the sum total maximum length of all fields.
  * \param set       The results set.
  * \returns         The sum total maximum length of all fields.
  */
-static size_t ds_recordset_get_total_field_length(struct ds_recordset * set);
+static size_t ds_recordset_get_total_field_length(ds_recordset set);
 
 /*!
  * \brief           Returns a formatted text line of field headers.
@@ -65,7 +65,7 @@ static size_t ds_recordset_get_total_field_length(struct ds_recordset * set);
  * \returns         A pointer to the line. The caller is responsible for
  * `free()`ing this pointer.
  */
-static ds_str ds_recordset_get_headers_line(struct ds_recordset * set);
+static ds_str ds_recordset_get_headers_line(ds_recordset set);
 
 /*!
  * \brief           Returns a formatted text separator line.
@@ -74,7 +74,7 @@ static ds_str ds_recordset_get_headers_line(struct ds_recordset * set);
  * \returns         A pointer to the line. The caller is responsible for
  * `free()`ing this pointer.
  */
-static ds_str ds_recordset_get_separator_line(struct ds_recordset * set);
+static ds_str ds_recordset_get_separator_line(ds_recordset set);
 
 /*!
  * \brief           Returns a formatted text line for the next record.
@@ -85,7 +85,7 @@ static ds_str ds_recordset_get_separator_line(struct ds_recordset * set);
  * \returns         A pointer to the line, or `NULL` if the end of
  * the result set has been reached.
  */
-static ds_str ds_recordset_get_next_line(struct ds_recordset * set);
+static ds_str ds_recordset_get_next_line(ds_recordset set);
 
 /*!
  * \brief           Creates a formatted text line from a record.
@@ -94,7 +94,7 @@ static ds_str ds_recordset_get_next_line(struct ds_recordset * set);
  * \returns         A pointer the line, or `NULL` on failure. The caller
  * is responsible for `free()`ing this pointer.
  */
-static ds_str ds_recordset_get_line_from_record(struct ds_recordset * set,
+static ds_str ds_recordset_get_line_from_record(ds_recordset set,
                                                  ds_record record);
 
 /*!
@@ -104,7 +104,7 @@ static ds_str ds_recordset_get_line_from_record(struct ds_recordset * set,
  * \returns         The line, or `NULL` on failure.
  */
 /*
-static ds_str ds_recordset_get_cs_line_from_record(struct ds_recordset * set,
+static ds_str ds_recordset_get_cs_line_from_record(ds_recordset set,
                                                     ds_record record,
                                                     const bool squote);
 */
@@ -117,10 +117,10 @@ static ds_str ds_recordset_get_cs_line_from_record(struct ds_recordset * set,
  */
 static ds_str add_line_to_report(ds_str report, ds_str line);
 
-struct ds_recordset * ds_recordset_create(const size_t num_fields) {
+ds_recordset ds_recordset_create(const size_t num_fields) {
     assert(num_fields > 0);
 
-    struct ds_recordset * new_set = malloc(sizeof *new_set);
+    ds_recordset new_set = malloc(sizeof *new_set);
     if ( !new_set ) {
         return NULL;
     }
@@ -139,7 +139,7 @@ struct ds_recordset * ds_recordset_create(const size_t num_fields) {
     return new_set;
 }
 
-void ds_recordset_destroy(struct ds_recordset * set) {
+void ds_recordset_destroy(ds_recordset set) {
     assert(set);
 
     if ( set->headers ) {
@@ -151,7 +151,7 @@ void ds_recordset_destroy(struct ds_recordset * set) {
     free(set);
 }
 
-ds_record ds_recordset_add_record(struct ds_recordset * set,
+ds_record ds_recordset_add_record(ds_recordset set,
                                    ds_record record) {
     assert(set && record);
     assert(ds_record_size(record) == ds_recordset_num_fields(set));
@@ -164,17 +164,17 @@ ds_record ds_recordset_add_record(struct ds_recordset * set,
     return record;
 }
 
-size_t ds_recordset_num_fields(struct ds_recordset * set) {
+size_t ds_recordset_num_fields(ds_recordset set) {
     assert(set);
     return set->num_fields;
 }
 
-size_t ds_recordset_num_records(struct ds_recordset * set) {
+size_t ds_recordset_num_records(ds_recordset set) {
     assert(set);
     return ds_list_length(set->records);
 }
 
-void ds_recordset_set_headers(struct ds_recordset * set,
+void ds_recordset_set_headers(ds_recordset set,
                                ds_record headers) {
     assert(set && headers);
     assert(ds_record_size(headers) == ds_recordset_num_fields(set));
@@ -183,7 +183,7 @@ void ds_recordset_set_headers(struct ds_recordset * set,
     ds_recordset_update_field_lengths(set, headers);
 }
 
-ds_str ds_recordset_get_text_report(struct ds_recordset * set) {
+ds_str ds_recordset_get_text_report(ds_recordset set) {
     assert(set);
 
     ds_str report = ds_str_create("");
@@ -212,17 +212,17 @@ ds_str ds_recordset_get_text_report(struct ds_recordset * set) {
     return report;
 }
 
-void ds_recordset_seek_start(struct ds_recordset * set) {
+void ds_recordset_seek_start(ds_recordset set) {
     assert(set);
     ds_list_seek_start(set->records);
 }
 
-ds_record ds_recordset_next_record(struct ds_recordset * set) {
+ds_record ds_recordset_next_record(ds_recordset set) {
     assert(set);
     return ds_list_get_next_data(set->records);
 }
 
-ds_str ds_recordset_get_next_insert_query(struct ds_recordset * set,
+ds_str ds_recordset_get_next_insert_query(ds_recordset set,
                                            const char * table_name) {
     static char basic_query[] = "INSERT INTO %s (%s) VALUES (%s)";
     ds_record record = ds_recordset_next_record(set);
@@ -242,7 +242,7 @@ ds_str ds_recordset_get_next_insert_query(struct ds_recordset * set,
     return query_string;
 }
 
-static ds_str ds_recordset_get_line_from_record(struct ds_recordset * set,
+static ds_str ds_recordset_get_line_from_record(ds_recordset set,
                                                 ds_record record) {
     assert(set && record);
 
@@ -264,7 +264,7 @@ static ds_str ds_recordset_get_line_from_record(struct ds_recordset * set,
     return new_line;
 }
 
-static void ds_recordset_update_field_lengths(struct ds_recordset * set,
+static void ds_recordset_update_field_lengths(ds_recordset set,
                                                ds_record record) {
     assert(set && record);
 
@@ -278,7 +278,7 @@ static void ds_recordset_update_field_lengths(struct ds_recordset * set,
 }
 
 static size_t
-ds_recordset_get_record_line_length(struct ds_recordset * set) {
+ds_recordset_get_record_line_length(ds_recordset set) {
     static const size_t separator_width = 1;
     static const size_t padding_width = 1;
     static const size_t null_character_width = 1;
@@ -294,7 +294,7 @@ ds_recordset_get_record_line_length(struct ds_recordset * set) {
 }
 
 static size_t
-ds_recordset_get_total_field_length(struct ds_recordset * set) {
+ds_recordset_get_total_field_length(ds_recordset set) {
     assert(set);
     size_t fields_length = 0;
     for ( size_t i = 0; i < set->num_fields; ++i ) {
@@ -303,7 +303,7 @@ ds_recordset_get_total_field_length(struct ds_recordset * set) {
     return fields_length;
 }
 
-static ds_str ds_recordset_get_headers_line(struct ds_recordset * set) {
+static ds_str ds_recordset_get_headers_line(ds_recordset set) {
     assert(set);
     if ( set->headers ) {
         return ds_recordset_get_line_from_record(set, set->headers);
@@ -313,7 +313,7 @@ static ds_str ds_recordset_get_headers_line(struct ds_recordset * set) {
     }
 }
 
-static ds_str ds_recordset_get_separator_line(struct ds_recordset * set) {
+static ds_str ds_recordset_get_separator_line(ds_recordset set) {
     assert(set);
 
     const size_t line_size = ds_recordset_get_record_line_length(set);
@@ -336,7 +336,7 @@ static ds_str ds_recordset_get_separator_line(struct ds_recordset * set) {
     return new_str;
 }
 
-static ds_str ds_recordset_get_next_line(struct ds_recordset * set) {
+static ds_str ds_recordset_get_next_line(ds_recordset set) {
     assert(set);
 
     ds_record record = ds_list_get_next_data(set->records);

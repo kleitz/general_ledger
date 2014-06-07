@@ -90,7 +90,7 @@ void ds_recordset_seek_start(ds_recordset set);
  * \details         This function returns the "current record", and advances
  * the current record pointer. Subsequent calls to this function will return
  * successive records.
- * \param list      The record set.
+ * \param set       The record set.
  * \returns         A pointer to the next record, or `NULL` if the end of
  * the record set has been reached.
  */

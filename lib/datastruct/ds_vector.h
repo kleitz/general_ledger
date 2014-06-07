@@ -62,6 +62,7 @@ void ds_vector_clear(ds_vector vector);
  * \details         If the element is currently occupied, the existing
  * element is `free()`d.
  * \param vector    The vector to which to set.
+ * \param index     The index of the element to set.
  * \param element   The element to set.
  */
 void ds_vector_set(ds_vector vector, const size_t index, void * element);

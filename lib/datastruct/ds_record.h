@@ -46,8 +46,9 @@ void ds_record_clear(ds_record record);
  * \brief           Sets a field of a record.
  * \details         If the field is currently occupied, the existing
  * field is `free()`d.
- * \param field     The field to which to set.
- * \param element   The element to set.
+ * \param record    The record to set.
+ * \param index     The index of the field to set.
+ * \param field     The value to which to set the field.
  */
 void ds_record_set_field(ds_record record, const size_t index, ds_str field);
 

@@ -10,7 +10,6 @@
 /*!
  * \brief           Enables POSIX library functions
  */
-
 #define _POSIX_C_SOURCE 200809L
 
 #include <stdio.h>
@@ -58,8 +57,8 @@ kv_pair_node_make(const char * key, const char * value);
 static struct kv_pair_node *
 kv_pair_node_free(struct kv_pair_node * node);
 
-struct ds_map * ds_map_init(const size_t hash_size) {
-    struct ds_map * new_map = malloc(sizeof *new_map);
+ds_map ds_map_init(const size_t hash_size) {
+    ds_map new_map = malloc(sizeof *new_map);
     if ( !new_map ) {
         fprintf(stderr, "Could't allocate memory for map.\n");
         exit(EXIT_FAILURE);
@@ -79,7 +78,7 @@ struct ds_map * ds_map_init(const size_t hash_size) {
     return new_map;
 }
 
-void ds_map_destroy(struct ds_map * map) {
+void ds_map_destroy(ds_map map) {
     for ( size_t idx = 0; idx < map->hash_size; ++idx ) {
         struct kv_pair_node * current_node = map->lists[idx];
         while ( current_node ) {
@@ -90,7 +89,7 @@ void ds_map_destroy(struct ds_map * map) {
     free(map);
 }
 
-const char * ds_map_get_value(struct ds_map * map, const char * key) {
+const char * ds_map_get_value(ds_map map, const char * key) {
     size_t hash_index = djb2hash(key) % map->hash_size;
     struct kv_pair_node * current_node = map->lists[hash_index];
 
@@ -104,7 +103,7 @@ const char * ds_map_get_value(struct ds_map * map, const char * key) {
     return NULL;
 }
 
-void ds_map_insert(struct ds_map * map, const char * key, const char * value) {
+void ds_map_insert(ds_map map, const char * key, const char * value) {
     size_t hash_index = djb2hash(key) % map->hash_size;
     struct kv_pair_node * current_node = map->lists[hash_index];
 

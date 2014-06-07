@@ -18,8 +18,8 @@ struct ds_record {
     struct ds_vector * fields;          /*!<  Vector of fields  */
 };
 
-struct ds_record * ds_record_create(const size_t size) {
-    struct ds_record * new_record = malloc(sizeof *new_record);
+ds_record ds_record_create(const size_t size) {
+    ds_record new_record = malloc(sizeof *new_record);
     if ( !new_record ) {
         return NULL;
     }
@@ -33,7 +33,7 @@ struct ds_record * ds_record_create(const size_t size) {
     return new_record;
 }
 
-void ds_record_destroy(struct ds_record * record) {
+void ds_record_destroy(ds_record record) {
     assert(record);
 
     ds_vector_destroy(record->fields);
@@ -44,13 +44,13 @@ void ds_record_destructor(void * record) {
     ds_record_destroy(record);
 }
 
-void ds_record_clear(struct ds_record * record) {
+void ds_record_clear(ds_record record) {
     assert(record);
 
     ds_vector_clear(record->fields);
 }
 
-void ds_record_set_field(struct ds_record * record,
+void ds_record_set_field(ds_record record,
                          const size_t index,
                          ds_str field) {
     assert(record);
@@ -58,25 +58,25 @@ void ds_record_set_field(struct ds_record * record,
     ds_vector_set(record->fields, index, field);
 }
 
-ds_str ds_record_get_field(struct ds_record * record, const size_t index) {
+ds_str ds_record_get_field(ds_record record, const size_t index) {
     assert(record);
 
     return ds_vector_element(record->fields, index);
 }
 
-size_t ds_record_size(struct ds_record * record) {
+size_t ds_record_size(ds_record record) {
     assert(record);
 
     return ds_vector_size(record->fields);
 }
 
-void ds_record_seek_start(struct ds_record * record) {
+void ds_record_seek_start(ds_record record) {
     assert(record);
 
     ds_vector_seek_start(record->fields);
 }
 
-ds_str ds_record_get_next_data(struct ds_record * record) {
+ds_str ds_record_get_next_data(ds_record record) {
     assert(record);
 
     return ds_vector_get_next_data(record->fields);

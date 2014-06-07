@@ -9,6 +9,7 @@
  * of the GNU General Public License. <http://www.gnu.org/licenses/>
  */
 
+/*!  UNIX feature test macro  */
 #define _XOPEN_SOURCE 600
 
 #include <stdio.h>

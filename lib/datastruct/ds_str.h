@@ -44,7 +44,7 @@ ds_str ds_str_create_sprintf(const char * format, ...);
  * available (e.g. in `ds_str_create_sprintf()`) this function allows
  * that memory to be directly assigned to the string, avoiding an
  * unnecessary duplication.
- * \param str           The allocated memory. IMPORTANT: If the construction
+ * \param init_str      The allocated memory. IMPORTANT: If the construction
  * of the string fails, this memory will be `free()`d.
  * \param init_str_size The size of the allocated memory. IMPORTANT: The
  * string's length is assumed to be one less than this quantity, and a
@@ -100,6 +100,13 @@ const char * ds_str_cstr(ds_str str);
 size_t ds_str_length(ds_str str);
 
 /*!
+ * \brief           Reduces a string's capacity to fit its length.
+ * \param str       The string to size.
+ * \returns         `str`, or `NULL` on failure.
+ */ 
+ds_str ds_str_size_to_fit(ds_str str);
+
+/*!
  * \brief           Concatenates two strings.
  * \param dst       The destination string.
  * \param src       The source strings.
@@ -113,7 +120,7 @@ ds_str ds_str_concat(ds_str dst, ds_str src);
  * \param src       The source strings.
  * \returns         The destination string, or `NULL` on failure.
  */
-ds_str ds_str_concat_cstr(struct ds_str * dst, const char * src);
+ds_str ds_str_concat_cstr(ds_str dst, const char * src);
 
 /*!
  * \brief           Truncates a string.
@@ -129,7 +136,7 @@ ds_str ds_str_trunc(ds_str str, const size_t length);
  * \param str       The string.
  * \returns         The hash value
  */
-unsigned long ds_str_hash(struct ds_str * str);
+unsigned long ds_str_hash(ds_str str);
 
 /*!
  * \brief           Compares two strings.

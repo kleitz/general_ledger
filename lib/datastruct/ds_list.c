@@ -51,9 +51,9 @@ static void list_element_destroy(struct ds_list_element * element,
                                  const bool data_free,
                                  void (*destructor)(void *));
 
-struct ds_list * ds_list_create(const bool free_on_delete,
+ds_list ds_list_create(const bool free_on_delete,
                                 void (*destructor)(void *)) {
-    struct ds_list * new_list = malloc(sizeof *new_list);
+    ds_list new_list = malloc(sizeof *new_list);
     if ( !new_list ) {
         return NULL;
     }
@@ -68,7 +68,7 @@ struct ds_list * ds_list_create(const bool free_on_delete,
     return new_list;
 }
 
-void ds_list_destroy(struct ds_list * list) {
+void ds_list_destroy(ds_list list) {
     assert(list);
 
     ds_list_remove_all(list);
@@ -79,7 +79,7 @@ void ds_list_destructor(void * list) {
     ds_list_destroy(list);
 }
 
-struct ds_list * ds_list_append(struct ds_list * list, void * data) {
+ds_list ds_list_append(ds_list list, void * data) {
     assert(list);
 
     struct ds_list_element * new_tail = list_element_create(data);
@@ -102,7 +102,7 @@ struct ds_list * ds_list_append(struct ds_list * list, void * data) {
     return list;
 }
 
-void ds_list_remove_tail(struct ds_list * list) {
+void ds_list_remove_tail(ds_list list) {
     assert(list && !ds_list_is_empty(list));
 
     struct ds_list_element * old_tail = list->tail;
@@ -135,7 +135,7 @@ void ds_list_remove_tail(struct ds_list * list) {
     list->length--;
 }
 
-void ds_list_remove_all(struct ds_list * list) {
+void ds_list_remove_all(ds_list list) {
     assert(list);
 
     while ( !ds_list_is_empty(list) ) {
@@ -143,7 +143,7 @@ void ds_list_remove_all(struct ds_list * list) {
     }
 }
 
-void * ds_list_element(struct ds_list * list, const size_t index) {
+void * ds_list_element(ds_list list, const size_t index) {
     assert(list && index < ds_list_length(list));
 
     struct ds_list_element * current_element = list->head;
@@ -161,27 +161,27 @@ void * ds_list_element(struct ds_list * list, const size_t index) {
     }
 }
 
-size_t ds_list_length(struct ds_list * list) {
+size_t ds_list_length(ds_list list) {
     assert(list);
     return list->length;
 }
 
-bool ds_list_is_empty(struct ds_list * list) {
+bool ds_list_is_empty(ds_list list) {
     assert(list);
     return list->length == 0;
 }
 
-void ds_list_seek_start(struct ds_list * list) {
+void ds_list_seek_start(ds_list list) {
     assert(list);
     list->current = list->head;
 }
 
-void ds_list_seek_end(struct ds_list * list) {
+void ds_list_seek_end(ds_list list) {
     assert(list);
     list->current = list->tail;
 }
 
-void * ds_list_get_next_data(struct ds_list * list) {
+void * ds_list_get_next_data(ds_list list) {
     assert(list);
 
     void * return_data = NULL;
@@ -194,7 +194,7 @@ void * ds_list_get_next_data(struct ds_list * list) {
     return return_data;
 }
 
-void * ds_list_get_prev_data(struct ds_list * list) {
+void * ds_list_get_prev_data(ds_list list) {
     assert(list);
 
     void * return_data = NULL;

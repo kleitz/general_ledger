@@ -1,3 +1,14 @@
+/*!
+ * \file            config.c
+ * \brief           Implementation of program configuration functionality.
+ * \details         Gets program configuration options from the command line
+ * and/or a configuration file.
+ * \author          Paul Griffiths
+ * \copyright       Copyright 2014 Paul Griffiths. Distributed under the terms
+ * of the GNU General Public License. <http://www.gnu.org/licenses/>
+ */
+
+/*!  UNIX feature test macro  */
 #define _XOPEN_SOURCE 500
 
 #include <stdio.h>
@@ -10,6 +21,11 @@
 #include "datastruct/data_structures.h"
 #include "gl_general/gl_general.h"
 
+/*!
+ * \brief           Gets a value from a configuration file key.
+ * \param key       The key for the desired value.
+ * \returns         The desired value, or `NULL` if the key is not set.
+ */
 static ds_str get_param_from_config(const char *key);
 
 struct params *params_init(void) {
@@ -43,28 +59,16 @@ void params_free(struct params *params) {
     }
 }
 
-static ds_str get_param_from_config(const char * key) {
-    ds_str value;
-
-    ds_str s_key = ds_str_create(key);
-    if ( !(value = config_file_value(s_key)) ) {
-        gl_log_msg("Name of %s not specified in configuration file.", key);
-    }
-    ds_str_destroy(s_key);
-
-    return ds_str_dup(value);
-}
-
-int get_configuration(struct params * params) {
-    int ret_val = 0;
+bool get_configuration(struct params * params) {
+    bool ret_val = true;
 
     int status = config_file_read("test_conf.conf");
     if (status == CONFIG_FILE_NO_FILE) {
         gl_log_msg("Couldn't open config file.");
-        ret_val = -1;
+        ret_val = false;
     } else if (status == CONFIG_FILE_MALFORMED_FILE) {
         gl_log_msg("Badly formed config file.");
-        ret_val = -1;
+        ret_val = false;
     }
     else {
         params->hostname = get_param_from_config("hostname");
@@ -73,7 +77,7 @@ int get_configuration(struct params * params) {
 
         if (!params->hostname ||
             !params->database || !params->username) {
-            ret_val = -1;
+            ret_val = false;
         }
 
         config_file_free();
@@ -82,10 +86,7 @@ int get_configuration(struct params * params) {
     return ret_val;
 }
 
-int get_cmdline_options(int argc, char **argv, struct params *params) {
-    int opt;
-    int ret_val = 0;
-
+bool get_cmdline_options(int argc, char **argv, struct params *params) {
     enum opts {
         CMDLINE_HELP = 1,
         CMDLINE_VERSION,
@@ -106,6 +107,9 @@ int get_cmdline_options(int argc, char **argv, struct params *params) {
         {"listentities", no_argument, NULL, CMDLINE_LISTENTITIES},
         {NULL, 0, NULL, 0}
     };
+
+    bool ret_val = true;
+    int opt;
 
     while ((opt = getopt_long(argc, argv, "hvcdsu",
                               long_options, NULL)) != -1) {
@@ -146,11 +150,22 @@ int get_cmdline_options(int argc, char **argv, struct params *params) {
                 break;
 
             default:
-                ret_val = -1;
+                ret_val = false;
         }
-
     }
 
     return ret_val;
+}
+
+static ds_str get_param_from_config(const char * key) {
+    ds_str value;
+
+    ds_str s_key = ds_str_create(key);
+    if ( !(value = config_file_value(s_key)) ) {
+        gl_log_msg("Name of %s not specified in configuration file.", key);
+    }
+    ds_str_destroy(s_key);
+
+    return ds_str_dup(value);
 }
 

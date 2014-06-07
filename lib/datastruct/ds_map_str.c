@@ -40,8 +40,8 @@ kv_pair_node_make(ds_str key, ds_str value);
 static struct kv_pair_node *
 kv_pair_node_free(struct kv_pair_node * node);
 
-struct ds_map_str * ds_map_str_init(const size_t hash_size) {
-    struct ds_map_str * new_map = malloc(sizeof *new_map);
+ds_map_str ds_map_str_init(const size_t hash_size) {
+    ds_map_str new_map = malloc(sizeof *new_map);
     if ( !new_map ) {
         fprintf(stderr, "Could't allocate memory for map.\n");
         exit(EXIT_FAILURE);
@@ -61,7 +61,7 @@ struct ds_map_str * ds_map_str_init(const size_t hash_size) {
     return new_map;
 }
 
-void ds_map_str_destroy(struct ds_map_str * map) {
+void ds_map_str_destroy(ds_map_str map) {
     for ( size_t idx = 0; idx < map->hash_size; ++idx ) {
         struct kv_pair_node * current_node = map->lists[idx];
         while ( current_node ) {
@@ -72,7 +72,7 @@ void ds_map_str_destroy(struct ds_map_str * map) {
     free(map);
 }
 
-ds_str ds_map_str_get_value(struct ds_map_str * map, ds_str key) {
+ds_str ds_map_str_get_value(ds_map_str map, ds_str key) {
     size_t hash_index = ds_str_hash(key) % map->hash_size;
     struct kv_pair_node * current_node = map->lists[hash_index];
 
@@ -86,7 +86,7 @@ ds_str ds_map_str_get_value(struct ds_map_str * map, ds_str key) {
     return NULL;
 }
 
-void ds_map_str_insert(struct ds_map_str * map, ds_str key, ds_str value) {
+void ds_map_str_insert(ds_map_str map, ds_str key, ds_str value) {
     size_t hash_index = ds_str_hash(key) % map->hash_size;
     struct kv_pair_node * current_node = map->lists[hash_index];
 
