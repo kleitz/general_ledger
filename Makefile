@@ -93,7 +93,6 @@ include lib/database/module.mk
 include lib/database/$(database)/module.mk
 include lib/gl_general/module.mk
 include lib/file_ops/module.mk
-include lib/stringhelp/module.mk
 include lib/datastruct/module.mk
 
 $(program):	$(main_objects) $(libraries)

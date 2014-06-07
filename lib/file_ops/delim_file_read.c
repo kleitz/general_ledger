@@ -11,7 +11,6 @@
 #include <string.h>
 #include <assert.h>
 #include "gl_general/gl_general.h"
-#include "stringhelp/string_functions.h"
 #include "datastruct/data_structures.h"
 #include "delim_file_read.h"
 
