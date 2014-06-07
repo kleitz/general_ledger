@@ -17,6 +17,7 @@
 #include "db_reporting.h"
 #include "db_users.h"
 #include "db_entities.h"
+#include "db_nomaccts.h"
 
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_H  */
 

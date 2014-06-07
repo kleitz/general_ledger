@@ -12,33 +12,31 @@ bool db_create_database_structure(void) {
     static bool (*createfunc[])(void) = {
         db_create_users_table,
         db_create_entities_table,
+        db_create_nomaccts_table,
         NULL
     };
 
+    bool status = true;
     for ( size_t i = 0; createfunc[i]; ++i ) {
-        bool status = createfunc[i]();
-        if ( status ) {
-            return status;
-        }
+        status = createfunc[i]();
     }
 
-    return true;
+    return status;
 }
 
 bool db_delete_database_structure(void) {
     static bool (*dropfunc[])(void) = {
         db_drop_users_table,
         db_drop_entities_table,
+        db_drop_nomaccts_table,
         NULL
     };
 
+    bool status = true;
     for ( size_t i = 0; dropfunc[i]; ++i ) {
-        bool status = dropfunc[i]();
-        if ( status ) {
-            return status;
-        }
+        status = dropfunc[i]();
     }
 
-    return true;
+    return status;
 }
 

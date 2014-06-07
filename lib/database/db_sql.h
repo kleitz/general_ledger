@@ -12,40 +12,59 @@
 #define PG_GENERAL_LEDGER_DATABASE_DB_SQL_H
 
 /*!
- * \brief            Returns the SQL query to create the users table.
+ * \brief           Returns the SQL query to create the users table.
  * \returns         The SQL query.
  */
 const char * db_create_users_table_sql(void);
 
 /*!
- * \brief            Returns the SQL query to drop the users table.
+ * \brief           Returns the SQL query to drop the users table.
  * \returns         The SQL query.
  */
 const char * db_drop_users_table_sql(void);
 
 /*!
- * \brief            Returns the SQL query to run the "list users" report.
+ * \brief           Returns the SQL query to run the "list users" report.
  * \returns         The SQL query.
  */
 const char * db_list_users_report_sql(void);
 
 /*!
- * \brief            Returns the SQL query to create the entities table.
+ * \brief           Returns the SQL query to create the entities table.
  * \returns         The SQL query.
  */
 const char * db_create_entities_table_sql(void);
 
 /*!
- * \brief            Returns the SQL query to drop the entities table.
+ * \brief           Returns the SQL query to drop the entities table.
  * \returns         The SQL query.
  */
 const char * db_drop_entities_table_sql(void);
 
 /*!
- * \brief            Returns the SQL query to run the "list entities" report.
+ * \brief           Returns the SQL query to run the "list entities" report.
  * \returns         The SQL query.
  */
 const char * db_list_entities_report_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to create the nominal accounts table.
+ * \returns         The SQL query.
+ */
+const char * db_create_nomaccts_table_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to drop the nominal accounts table.
+ * \returns         The SQL query.
+ */
+const char * db_drop_nomaccts_table_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to run the "list nominal accounts"
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_list_nomaccts_report_sql(void);
 
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_SQL_H  */
 

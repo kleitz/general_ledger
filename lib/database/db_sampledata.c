@@ -8,6 +8,7 @@
 
 #include "db_internal.h"
 #include "file_ops/file_ops.h"
+#include "gl_general/gl_general.h"
 
 /*!
  * \brief           Adds sample data from a file to a database table.
@@ -25,18 +26,18 @@ bool db_load_sample_data(void) {
     static const char * sample_data[][2] = {
         {"users", "sample_data/users"},
         {"entities", "sample_data/entities"},
+        {"nomaccts", "sample_data/nomaccts"},
         {NULL, NULL}
     };
 
+    bool status = true;
     for ( size_t i = 0; sample_data[i][0]; ++i ) {
-        bool status = db_add_sample_data(sample_data[i][0],
-                                         sample_data[i][1]);
-        if ( status ) {
-            return status;
-        }
+        gl_log_msg("Loading sample data for table %s...", sample_data[i][0]);
+        status = db_add_sample_data(sample_data[i][0],
+                                    sample_data[i][1]);
     }
 
-    return 0;
+    return status;
 }
 
 static bool db_add_sample_data(const char * table, const char * filename) {
@@ -50,7 +51,7 @@ static bool db_add_sample_data(const char * table, const char * filename) {
         ret_val = db_execute_query(ds_str_cstr(query));
         ds_str_destroy(query);
 
-        if ( ret_val ) {
+        if ( !ret_val ) {
             ds_recordset_destroy(data);
             return false;
         }
