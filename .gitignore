@@ -4,6 +4,7 @@ general_ledger
 # Doxygen folders
 html
 latex
+docs/._refman.pdf
 
 # Compiled Object files
 *.slo
