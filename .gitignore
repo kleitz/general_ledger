@@ -1,5 +1,6 @@
 # Executables
-general_ledger
+gl_db
+gl_reports
 
 # Doxygen folders
 html
