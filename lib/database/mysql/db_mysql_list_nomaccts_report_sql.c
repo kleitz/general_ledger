@@ -12,7 +12,14 @@ const char * db_list_nomaccts_report_sql(void) {
         "SELECT"
         "  num AS 'A/C Number',"
         "  description AS 'Description',"
-        "  enabled AS 'Enabled?'"
+        "  CASE enabled"
+        "    WHEN TRUE"
+        "      THEN 'Yes'"
+        "    WHEN FALSE"
+        "      THEN 'No'"
+        "    ELSE 'Unknown'"
+        "  END"
+        "    AS 'Enabled?'"
         "  FROM nomaccts"
         "  ORDER BY num";
     return query;
