@@ -9,8 +9,9 @@
 #ifndef PG_GENERAL_LEDGER_DS_RECORD_SET_H
 #define PG_GENERAL_LEDGER_DS_RECORD_SET_H
 
-#include "datastruct/ds_record.h"
-#include "datastruct/ds_str.h"
+#include "ds_record.h"
+#include "ds_str.h"
+#include "ds_fieldtypes.h"
 
 /*!  Typedef for opaque record set data type  */
 typedef struct ds_recordset * ds_recordset;
@@ -62,6 +63,15 @@ size_t ds_recordset_num_records(ds_recordset set);
  */
 void ds_recordset_set_headers(ds_recordset set, ds_record headers);
 
+/*!
+ * \brief           Sets the type for a specified field.
+ * \param set       The record set.
+ * \param index     The index to set.
+ * \param type      The type for the field at the specified index.
+ */
+void ds_recordset_set_type(ds_recordset set,
+                           const size_t index,
+                           const enum ds_field_types type);
 /*!
  * \brief           Returns a formatted text report for the record set.
  * \details         The report is returned as a single multi-line string.

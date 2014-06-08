@@ -14,6 +14,7 @@
 #include "ds_str.h"
 #include "ds_map.h"
 #include "ds_map_str.h"
+#include "ds_fieldtypes.h"
 #include "ds_record.h"
 #include "ds_recordset.h"
 

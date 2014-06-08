@@ -6,6 +6,8 @@
  * of the GNU General Public License. <http://www.gnu.org/licenses/>
  */
 
+#include <assert.h>
+
 #include "db_internal.h"
 #include "file_ops/file_ops.h"
 #include "gl_general/gl_general.h"
@@ -44,6 +46,7 @@ static bool db_add_sample_data(const char * table, const char * filename) {
     bool ret_val = true;
 
     ds_recordset data = delim_file_read(filename, ':');
+    assert(data);
     ds_recordset_seek_start(data);
 
     ds_str query;

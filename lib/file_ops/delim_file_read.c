@@ -52,13 +52,39 @@ ds_recordset delim_file_read(const char * filename, const char delim) {
     assert(headers);
     size_t num_fields = ds_record_size(headers);
 
+    ds_record types = get_next_record(delim_file, delim);
+    assert(types);
+    assert(ds_record_size(headers) == ds_record_size(types));
+
     ds_recordset set = ds_recordset_create(num_fields);
+    assert(set);
     if ( !set ) {
         ds_record_destroy(headers);
+        ds_record_destroy(types);
         return NULL;
     }
     ds_recordset_set_headers(set, headers);
 
+    for ( size_t i = 0; i < ds_record_size(types); ++i ) {
+        ds_str field = ds_record_get_field(types, i);
+        if ( !ds_str_compare_cstr(field, "string") ) {
+            ds_recordset_set_type(set, i, DS_FIELD_STRING);
+        }
+        else if ( !ds_str_compare_cstr(field, "integer") ) {
+            ds_recordset_set_type(set, i, DS_FIELD_INT);
+        }
+        else if ( !ds_str_compare_cstr(field, "double") ) {
+            ds_recordset_set_type(set, i, DS_FIELD_DOUBLE);
+        }
+        else if ( !ds_str_compare_cstr(field, "boolean") ) {
+            ds_recordset_set_type(set, i, DS_FIELD_BOOLEAN);
+        }
+        else {
+            ds_recordset_set_type(set, i, DS_FIELD_STRING);
+        }
+    }
+
+    ds_record_destroy(types);
     ds_record row = NULL;
 
     while ( (row = get_next_record(delim_file, delim)) ) {

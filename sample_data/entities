@@ -1,5 +1,6 @@
-name:parent
-Apollo Holdings, Inc:1
-Luna Manufacturing Corp.:1
-Rocket Delivery Services Limited:2
-Jupiter Financial Corporation:1
+name:parent:aggregate
+string:integer:boolean
+Apollo Holdings, Inc:1:1
+Luna Manufacturing Corp.:1:0
+Rocket Delivery Services Limited:2:0
+Jupiter Financial Corporation:1:0

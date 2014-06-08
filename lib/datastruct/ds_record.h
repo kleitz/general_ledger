@@ -13,6 +13,7 @@
 #include <stdbool.h>
 
 #include "ds_str.h"
+#include "ds_fieldtypes.h"
 
 /*!  Typedef for opaque record datatype  */
 typedef struct ds_record * ds_record;
@@ -104,9 +105,13 @@ ds_str ds_record_make_delim_string(ds_record record, const char delim);
 /*!
  * \brief           Makes a delimited SQL values string from a record.
  * \param record    The record.
+ * \param types     An array of types for each field, or `NULL` to assume
+ * they are all strings. The effect of this parameter is that string fields
+ * are quoted in the values string, whereas non-string fields are not.
  * \returns         The delimited values string, or `NULL` on failure.
  */
-ds_str ds_record_make_values_string(ds_record record);
+ds_str ds_record_make_values_string(ds_record record,
+                                    enum ds_field_types * types);
 
 #endif      /*  PG_GENERAL_LEDGER_DS_RECORD_H  */
 

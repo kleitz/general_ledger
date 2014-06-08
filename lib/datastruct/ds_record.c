@@ -122,17 +122,29 @@ ds_str ds_record_make_delim_string(ds_record record, const char delim) {
     return result;
 }
 
-ds_str ds_record_make_values_string(ds_record record) {
+ds_str ds_record_make_values_string(ds_record record,
+                                    enum ds_field_types * types) {
     ds_str quote_str = ds_str_create("'");
     ds_str delim_str = ds_str_create(",");
-    ds_str result = ds_str_decorate(ds_record_get_field(record, 0),
+    ds_str result = ds_str_create("");
+
+    for ( size_t i = 0; i < ds_record_size(record); ++i ) {
+        ds_str field;
+
+        if ( (types == NULL) || (types[i] == DS_FIELD_STRING) ) {
+            field = ds_str_decorate(ds_record_get_field(record, i),
                                     quote_str, NULL);
-    for ( size_t i = 1; i < ds_record_size(record); ++i ) {
-        ds_str_concat(result, delim_str);
-        ds_str quoted_field = ds_str_decorate(ds_record_get_field(record, i),
-                                              quote_str, NULL);
-        ds_str_concat(result, quoted_field);
-        ds_str_destroy(quoted_field);
+        }
+        else {
+            field = ds_str_dup(ds_record_get_field(record, i));
+        }
+
+        if ( i != 0 ) {
+            ds_str_concat(result, delim_str);
+        }
+
+        ds_str_concat(result, field);
+        ds_str_destroy(field);
     }
     ds_str_destroy(delim_str);
     ds_str_destroy(quote_str);

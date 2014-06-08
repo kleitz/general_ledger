@@ -1,13 +1,14 @@
-num:description
-10001000:Investment in subsidiaries
-10002000:Property, plant & equipment
-10003000:Cash
-10004000:Accounts receivable
-20001000:Accounts payable
-20002000:Accruals
-30001000:Common stock
-30002000:Additional paid-in capital
-30003000:Retained earnings
-40001000:Sales
-50001000:Cost of sales
-60001000:General and administrative expenses
+num:description:enabled
+string:string:boolean
+10001000:Investment in subsidiaries:1
+10002000:Property, plant & equipment:1
+10003000:Cash:1
+10004000:Accounts receivable:1
+20001000:Accounts payable:0
+20002000:Accruals:1
+30001000:Common stock:1
+30002000:Additional paid-in capital:1
+30003000:Retained earnings:1
+40001000:Sales:1
+50001000:Cost of sales:1
+60001000:General and administrative expenses:1

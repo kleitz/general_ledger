@@ -263,7 +263,7 @@ void test_functionality(void) {
     ds_str tokenized = ds_record_make_delim_string(tized, ':');
     printf("Tokenized again: [%s]\n", ds_str_cstr(tokenized));
     ds_str_destroy(tokenized);
-    tokenized = ds_record_make_values_string(tized);
+    tokenized = ds_record_make_values_string(tized, NULL);
     printf("To values string: [%s]\n", ds_str_cstr(tokenized));
     ds_str_destroy(tokenized);
     ds_record_destroy(tized);
@@ -285,6 +285,18 @@ void test_functionality(void) {
 
     printf("Decorated 1: %s\n", ds_str_cstr(tag1));
     printf("Decorated 2: %s\n", ds_str_cstr(tag2));
+
+    ds_str tv = ds_str_create("hello,1,1.45,0");
+    ds_record tvtok = ds_record_tokenize(tv, ',');
+    enum ds_field_types thetypes[] = {
+        DS_FIELD_STRING,
+        DS_FIELD_INT,
+        DS_FIELD_DOUBLE,
+        DS_FIELD_BOOLEAN
+    };
+    ds_str vs = ds_record_make_values_string(tvtok, thetypes);
+    ds_record_destroy(tvtok);
+    printf("Values string: %s\n", ds_str_cstr(vs));
 
     ds_str_destroy(initial_string);
     ds_str_destroy(lss);
@@ -311,5 +323,7 @@ void test_functionality(void) {
     ds_str_destroy(contents);
     ds_str_destroy(tag1);
     ds_str_destroy(tag2);
+    ds_str_destroy(tv);
+    ds_str_destroy(vs);
 }
 

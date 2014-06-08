@@ -19,6 +19,7 @@ struct ds_recordset {
     size_t * field_lengths;     /*!<  Lengths of the longest fields     */
     ds_record headers;          /*!<  A list of field headers           */
     ds_list records;            /*!<  A list of records                 */
+    enum ds_field_types * types;/*!<  Types of records                  */
 };
 
 /*!
@@ -98,17 +99,6 @@ static ds_str ds_recordset_get_line_from_record(ds_recordset set,
                                                  ds_record record);
 
 /*!
- * \brief           Creates a comma-separated text line from a record.
- * \param set       The results set.
- * \param record    The record.
- * \returns         The line, or `NULL` on failure.
- */
-/*
-static ds_str ds_recordset_get_cs_line_from_record(ds_recordset set,
-                                                    ds_record record,
-                                                    const bool squote);
-*/
-/*!
  * \brief           Adds a line to a report.
  * \param report    A pointer to the current place in the report.
  * \param line      A pointer to the dynamically allocated line. The function
@@ -130,12 +120,18 @@ ds_recordset ds_recordset_create(const size_t num_fields) {
     new_set->records = ds_list_create(true, ds_record_destructor);
     new_set->field_lengths = calloc(num_fields,
                                     sizeof *new_set->field_lengths);
+    new_set->types = malloc(num_fields * sizeof *new_set->types);
 
-    if ( !new_set->records || !new_set->field_lengths ) {
+    if ( !new_set->records || !new_set->field_lengths ||
+         !new_set->types ) {
         ds_recordset_destroy(new_set);
         return NULL;
     }
     
+    for ( size_t i = 0; i < num_fields; ++i ) {
+        new_set->types[i] = DS_FIELD_STRING;
+    }
+
     return new_set;
 }
 
@@ -148,6 +144,7 @@ void ds_recordset_destroy(ds_recordset set) {
 
     ds_list_destroy(set->records);
     free(set->field_lengths);
+    free(set->types);
     free(set);
 }
 
@@ -181,6 +178,13 @@ void ds_recordset_set_headers(ds_recordset set,
 
     set->headers = headers;
     ds_recordset_update_field_lengths(set, headers);
+}
+
+void ds_recordset_set_type(ds_recordset set,
+                           const size_t index,
+                           const enum ds_field_types type) {
+    assert(index <= set->num_fields);
+    set->types[index] = type;
 }
 
 ds_str ds_recordset_get_text_report(ds_recordset set) {
@@ -231,7 +235,7 @@ ds_str ds_recordset_get_next_insert_query(ds_recordset set,
     }
 
     ds_str headers_line = ds_record_make_delim_string(set->headers, ',');
-    ds_str record_line = ds_record_make_values_string(record);
+    ds_str record_line = ds_record_make_values_string(record, set->types);
     ds_str query_string = ds_str_create_sprintf(basic_query,
             table_name,
             ds_str_cstr(headers_line),
