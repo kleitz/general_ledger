@@ -10,6 +10,7 @@
 
 bool db_create_database_structure(void) {
     static bool (*createfunc[])(void) = {
+        db_create_standingdata_table,
         db_create_users_table,
         db_create_entities_table,
         db_create_jesrcs_table,
@@ -35,6 +36,7 @@ bool db_delete_database_structure(void) {
         db_drop_jesrcs_table,
         db_drop_entities_table,
         db_drop_users_table,
+        db_drop_standingdata_table,
         NULL
     };
 

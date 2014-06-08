@@ -35,13 +35,13 @@ void db_close(void) {
     gl_log_msg("Dummy connection closed.");
 }
 
-bool db_execute_query(const char * query) {
+bool db_execute_query(ds_str query) {
     gl_log_msg("Dummy query successful");
     (void)query;
     return true;
 }
 
-ds_recordset db_create_recordset_from_query(const char * query) {
+ds_recordset db_create_recordset_from_query(ds_str query) {
     const size_t num_fields = 4;
     const size_t num_rows = 5;
     ds_recordset set = ds_recordset_create(num_fields);
@@ -62,6 +62,7 @@ ds_recordset db_create_recordset_from_query(const char * query) {
         }
         ds_recordset_add_record(set, record);
     }
+
     (void)query;
     return set;
 }

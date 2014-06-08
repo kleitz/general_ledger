@@ -26,6 +26,7 @@ static bool db_add_sample_data(const char * table, const char * filename);
 
 bool db_load_sample_data(void) {
     static const char * sample_data[][2] = {
+        {"standing_data", "sample_data/standing_data"},
         {"users", "sample_data/users"},
         {"entities", "sample_data/entities"},
         {"jesrcs", "sample_data/jesrcs"},

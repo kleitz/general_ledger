@@ -116,6 +116,9 @@ int main(int argc, char ** argv) {
                     else if ( !ds_str_compare_cstr(value, "listjesrcs") ) {
                         report = db_list_jesrcs_report();
                     }
+                    else if ( !ds_str_compare_cstr(value, "standingdata") ) {
+                        report = db_show_standingdata_report();
+                    }
                     else if ( !ds_str_compare_cstr(value, "currenttb") ) {
                         ds_str entity = config_value_get_cstr("entity");
                         if ( entity ) {
@@ -174,17 +177,21 @@ void print_usage_message(char * progname) {
 
 void print_help_message(char * progname) {
     print_usage_message(progname);
-    printf("Options:\n");
+    printf("General options:\n");
     printf("  --help            Display this information\n");
     printf("  --version         Display version information\n");
+    printf("\nDatabase options:\n");
     printf("  --create          Create database structure\n");
     printf("  --delete          Delete database structure\n");
-    printf("  --entity <entity> Specifies an entity\n");
     printf("  --loadsample      Load sample data\n");
+    printf("\nReporting options:\n");
+    printf("  --entity <entity> Specifies an entity\n");
     printf("  --listusers       Show a list of users\n");
     printf("  --listentities    Show a list of entities\n");
     printf("  --listjes         Show a list of journal entries\n");
     printf("  --listjelines     Show a list of journal entry lines\n");
+    printf("  --listjesrcs      Show a list of journal entry sources\n");
+    printf("  --standingdata    Show the standing data\n");
     printf("  --currenttb       Show a current trial balance for <entity>\n");
 }
 

@@ -130,5 +130,24 @@ const char * db_drop_jesrcs_table_sql(void);
  */
 const char * db_list_jesrcs_report_sql(void);
 
+/*!
+ * \brief           Returns the SQL query to create the standing data table.
+ * \returns         The SQL query.
+ */
+const char * db_create_standingdata_table_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to drop the standing data table.
+ * \returns         The SQL query.
+ */
+const char * db_drop_standingdata_table_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to run the "show standing data"
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_show_standingdata_report_sql(void);
+
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_SQL_H  */
 
