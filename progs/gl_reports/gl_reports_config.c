@@ -12,6 +12,7 @@
 /*!  UNIX feature test macro  */
 #define _XOPEN_SOURCE 500
 
+#include <stdlib.h>
 #include <assert.h>
 #include <getopt.h>
 #include "gl_reports_config.h"
@@ -32,6 +33,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         CMDLINE_SHOWSTANDINGDATA,
         CMDLINE_CURRENTTB,
         CMDLINE_CHECKTOTALS,
+        CMDLINE_ALLJES,
         CMDLINE_ENTITY,
     };
 
@@ -50,6 +52,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         {"standingdata", no_argument, NULL, CMDLINE_SHOWSTANDINGDATA},
         {"currenttb", no_argument, NULL, CMDLINE_CURRENTTB},
         {"checktotals", no_argument, NULL, CMDLINE_CHECKTOTALS},
+        {"entries", optional_argument, NULL, CMDLINE_ALLJES},
         {"entity", required_argument, NULL, CMDLINE_ENTITY},
         {NULL, 0, NULL, 0}
     };
@@ -147,6 +150,27 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
                 config_value_set(key, value);
                 assert(ds_str_assign_cstr(key, "report"));
                 assert(ds_str_assign_cstr(value, "checktotal"));
+                config_value_set(key, value);
+                break;
+
+            case CMDLINE_ALLJES:
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+
+                if ( optarg ) {
+                    assert(ds_str_assign_cstr(key, "je_num"));
+                    assert(ds_str_assign_cstr(value, optarg));
+                    if ( ds_str_intval(value, 10, NULL) ) {
+                        config_value_set(key, value);
+                    }
+                    else {
+                        gl_log_msg("Invalid JE number: %s", ds_str_cstr(value));
+                        ret_val = false;
+                    }
+                }
+
+                assert(ds_str_assign_cstr(key, "report"));
+                assert(ds_str_assign_cstr(value, "entries"));
                 config_value_set(key, value);
                 break;
 

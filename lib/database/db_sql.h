@@ -194,5 +194,31 @@ const char * db_check_total_report_sql(void);
  */
 const char * db_check_total_entity_report_sql(void);
 
+/*!
+ * \brief           Returns the SQL query to create the all JEs view.
+ * \returns         The SQL query.
+ */
+const char * db_create_all_jes_view_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to drop the all JEs view.
+ * \returns         The SQL query.
+ */
+const char * db_drop_all_jes_view_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to run the "all JEs"
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_all_jes_report_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to run the "JE by number"
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_all_jes_number_report_sql(void);
+
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_SQL_H  */
 

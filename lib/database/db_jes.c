@@ -42,3 +42,45 @@ ds_str db_list_jes_report(void) {
     return report;
 }
 
+bool db_create_all_jes_view(void) {
+    gl_log_msg("Creating all JEs view...");
+    bool status = false;
+    ds_str query = ds_str_create(db_create_all_jes_view_sql());
+    if ( query ) {
+        status = db_execute_query(query);
+        ds_str_destroy(query);
+    }
+    return status;
+}
+
+bool db_drop_all_jes_view(void) {
+    gl_log_msg("Dropping all JEs view...");
+    bool status = false;
+    ds_str query = ds_str_create(db_drop_all_jes_view_sql());
+    if ( query ) {
+        status = db_execute_query(query);
+        ds_str_destroy(query);
+    }
+    return status;
+}
+
+ds_str db_all_jes_report(ds_str je_num) {
+    gl_log_msg("Running 'All JEs' report...");
+    ds_str report = NULL;
+    ds_str query;
+    
+    if ( je_num ) {
+        const char * cquery = db_all_jes_number_report_sql();
+        query = ds_str_create_sprintf(cquery, ds_str_cstr(je_num));
+    }
+    else {
+        query = ds_str_create(db_all_jes_report_sql());
+    }
+
+    if ( query ) {
+        report = db_create_report_from_query(query);
+        ds_str_destroy(query);
+    }
+    return report;
+}
+

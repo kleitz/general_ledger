@@ -1,10 +1,12 @@
 num:description:enabled
 string:string:boolean
 10001000:Investment in subsidiaries:1
-10002000:Property, plant & equipment:1
+10002000:Fixed assets - cost:1
+10002010:Fixed assets - accum. depn.:1
 10003000:Cash:1
 10004000:Accounts receivable:1
-20001000:Accounts payable:0
+10005000:Inventory:1
+20001000:Accounts payable:1
 20002000:Accruals:1
 30001000:Common stock:1
 30002000:Additional paid-in capital:1
@@ -12,3 +14,5 @@ string:string:boolean
 40001000:Sales:1
 50001000:Cost of sales:1
 60001000:General and administrative expenses:1
+60001010:Salaries:1
+60002000:Depreciation expense:1

@@ -30,5 +30,25 @@ bool db_drop_jes_table(void);
  */
 ds_str db_list_jes_report(void);
 
+/*!
+ * \brief           Creates the all JEs view in the database.
+ * \returns         `true` on success, `false` on failure.
+ */
+bool db_create_all_jes_view(void);
+
+/*!
+ * \brief           Drops the all JEs view from the database.
+ * \returns         `true` on success, `false` on failure.
+ */
+bool db_drop_all_jes_view(void);
+
+/*!
+ * \brief           Creates a report showing all journal entries.
+ * \param je_num    The journal entry number to show, or `NULL` to show
+ * all journal entries.
+ * \returns         A ds_str containing the report.
+ */
+ds_str db_all_jes_report(ds_str je_num);
+
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_JES_H  */
 

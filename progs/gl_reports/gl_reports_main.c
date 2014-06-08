@@ -81,6 +81,9 @@ int main(int argc, char ** argv) {
                     else if ( !ds_str_compare_cstr(value, "listentities") ) {
                         report = db_list_entities_report();
                     }
+                    else if ( !ds_str_compare_cstr(value, "listnomaccts") ) {
+                        report = db_list_nomaccts_report();
+                    }
                     else if ( !ds_str_compare_cstr(value, "listjes") ) {
                         report = db_list_jes_report();
                     }
@@ -100,6 +103,10 @@ int main(int argc, char ** argv) {
                     else if ( !ds_str_compare_cstr(value, "checktotal") ) {
                         ds_str entity = config_value_get_cstr("entity");
                         report = db_check_total_report(entity);
+                    }
+                    else if ( !ds_str_compare_cstr(value, "entries") ) {
+                        ds_str je_num = config_value_get_cstr("je_num");
+                        report = db_all_jes_report(je_num);
                     }
 
                     if ( report ) {
@@ -139,20 +146,23 @@ void print_usage_message(const char * progname) {
 void print_help_message(const char * progname) {
     print_usage_message(progname);
     printf("General options:\n");
-    printf("  --help            Display this information\n");
-    printf("  --version         Display version information\n");
+    printf("  --help                Display this information\n");
+    printf("  --version             Display version information\n");
     printf("\nReporting options:\n");
-    printf("  --entity <entity> Specifies an entity\n");
-    printf("  --listusers       Show a list of users\n");
-    printf("  --listentities    Show a list of entities\n");
-    printf("  --listjes         Show a list of journal entries\n");
-    printf("  --listjelines     Show a list of journal entry lines\n");
-    printf("  --listjesrcs      Show a list of journal entry sources\n");
-    printf("  --standingdata    Show the standing data\n");
-    printf("  --currenttb       Show a current trial balance\n");
-    printf("                                   (optionally for <entity>)\n");
-    printf("  --checktotal      Show double entry check totals\n");
-    printf("                                   (optionally for <entity>)\n");
+    printf("  --entity <entity>     Specifies an entity\n");
+    printf("  --listusers           Show a list of users\n");
+    printf("  --listentities        Show a list of entities\n");
+    printf("  --listnomaccts        Show a list of nominal accounts\n");
+    printf("  --listjes             Show a list of simple journal entries\n");
+    printf("  --listjelines         Show a list of journal entry lines\n");
+    printf("  --listjesrcs          Show a list of journal entry sources\n");
+    printf("  --standingdata        Show the standing data\n");
+    printf("  --currenttb           Show a current trial balance\n");
+    printf("                               (optionally for <entity>)\n");
+    printf("  --checktotal          Show double entry check totals\n");
+    printf("                               (optionally for <entity>)\n");
+    printf("  --entries[=<je_num>]  Show detailed journal entries\n");
+    printf("                               (optionally for <je_num> only)\n");
 }
 
 void print_version_message(const char * progname) {

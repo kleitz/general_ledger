@@ -3,6 +3,39 @@ int:string:integer:integer:integer:string
 1:SAMPLE:2014:1:1:Initial capital contribution
 1:SAMPLE:2014:1:1:Investment in Luna
 1:SAMPLE:2014:1:1:Investment in Jupiter
+1:SAMPLE:2014:1:1:Purchase of equipment
+1:SAMPLE:2014:1:1:January depreciation
+1:SAMPLE:2014:2:1:February depreciation
+1:SAMPLE:2014:3:1:March depreciation
+1:SAMPLE:2014:4:1:April depreciation
+1:SAMPLE:2014:5:1:May depreciation
+1:SAMPLE:2014:1:1:January sales
+1:SAMPLE:2014:2:1:February sales
+1:SAMPLE:2014:3:1:March sales
+1:SAMPLE:2014:4:1:April sales
+1:SAMPLE:2014:5:1:May sales
+1:SAMPLE:2014:1:1:January purchases
+1:SAMPLE:2014:2:1:February purchases
+1:SAMPLE:2014:3:1:March purchases
+1:SAMPLE:2014:4:1:April purchases
+1:SAMPLE:2014:5:1:May purchases
+1:SAMPLE:2014:1:1:January accounts receivable
+1:SAMPLE:2014:2:1:February accounts receivable
+1:SAMPLE:2014:3:1:March accounts receivable
+1:SAMPLE:2014:4:1:April accounts receivable
+1:SAMPLE:2014:5:1:May accounts receivable
+1:SAMPLE:2014:1:1:January accounts payable
+1:SAMPLE:2014:2:1:February accounts payable
+1:SAMPLE:2014:3:1:March accounts payable
+1:SAMPLE:2014:4:1:April accounts payable
+1:SAMPLE:2014:5:1:May accounts payable
+1:SAMPLE:2014:1:1:January salaries
+1:SAMPLE:2014:2:1:February salaries
+1:SAMPLE:2014:3:1:March salaries
+1:SAMPLE:2014:4:1:April salaries
+1:SAMPLE:2014:5:1:May salaries
+
+
 1:SAMPLE:2014:1:2:Initial capital contribution
 1:SAMPLE:2014:3:2:Investment in Rocket
 1:SAMPLE:2014:1:3:Initial capital contribution
