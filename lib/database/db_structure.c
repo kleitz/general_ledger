@@ -13,6 +13,7 @@ bool db_create_database_structure(void) {
         db_create_users_table,
         db_create_entities_table,
         db_create_nomaccts_table,
+        db_create_jes_table,
         NULL
     };
 
@@ -26,9 +27,10 @@ bool db_create_database_structure(void) {
 
 bool db_delete_database_structure(void) {
     static bool (*dropfunc[])(void) = {
-        db_drop_users_table,
-        db_drop_entities_table,
+        db_drop_jes_table,
         db_drop_nomaccts_table,
+        db_drop_entities_table,
+        db_drop_users_table,
         NULL
     };
 

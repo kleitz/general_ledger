@@ -48,6 +48,25 @@ const char * db_drop_entities_table_sql(void);
 const char * db_list_entities_report_sql(void);
 
 /*!
+ * \brief           Returns the SQL query to create the journal entries table.
+ * \returns         The SQL query.
+ */
+const char * db_create_jes_table_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to drop the journal entries table.
+ * \returns         The SQL query.
+ */
+const char * db_drop_jes_table_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to run the "list journal entries"
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_list_jes_report_sql(void);
+
+/*!
  * \brief           Returns the SQL query to create the nominal accounts table.
  * \returns         The SQL query.
  */

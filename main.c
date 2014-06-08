@@ -76,7 +76,8 @@ int main(int argc, char ** argv) {
     }
     else if ( params->create || params->list_users ||
               params->delete_data || params->sample ||
-              params->list_entities || params->list_nomaccts ) {
+              params->list_entities || params->list_nomaccts ||
+              params->list_jes ) {
         if ( !get_configuration(params) ) {
             gl_log_msg("Couldn't get parameters.");
         }
@@ -109,6 +110,11 @@ int main(int argc, char ** argv) {
                 }
                 else if ( params->list_nomaccts ) {
                     ds_str report = db_list_nomaccts_report();
+                    printf("%s", ds_str_cstr(report));
+                    ds_str_destroy(report);
+                }
+                else if ( params->list_jes ) {
+                    ds_str report = db_list_jes_report();
                     printf("%s", ds_str_cstr(report));
                     ds_str_destroy(report);
                 }

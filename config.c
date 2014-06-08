@@ -43,6 +43,7 @@ struct params *params_init(void) {
         new_params->list_users = false;
         new_params->list_entities = false;
         new_params->list_nomaccts = false;
+        new_params->list_jes = false;
     } else {
         gl_log_msg("Couldn't allocate memory for parameters.");
     }
@@ -97,6 +98,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         CMDLINE_LISTUSERS,
         CMDLINE_LISTENTITIES,
         CMDLINE_LISTNOMACCTS,
+        CMDLINE_LISTJES,
     };
 
     static struct option long_options[] = {
@@ -108,13 +110,14 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         {"listusers", no_argument, NULL, CMDLINE_LISTUSERS},
         {"listentities", no_argument, NULL, CMDLINE_LISTENTITIES},
         {"listnomaccts", no_argument, NULL, CMDLINE_LISTNOMACCTS},
+        {"listjes", no_argument, NULL, CMDLINE_LISTJES},
         {NULL, 0, NULL, 0}
     };
 
     bool ret_val = true;
     int opt;
 
-    while ((opt = getopt_long(argc, argv, "hvcdsun",
+    while ((opt = getopt_long(argc, argv, "hvcdsunj",
                               long_options, NULL)) != -1) {
         switch ( opt ) {
             case 'h':
@@ -155,6 +158,11 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
             case 'n':
             case CMDLINE_LISTNOMACCTS:
                 params->list_nomaccts = true;
+                break;
+
+            case 'j':
+            case CMDLINE_LISTJES:
+                params->list_jes = true;
                 break;
 
             default:

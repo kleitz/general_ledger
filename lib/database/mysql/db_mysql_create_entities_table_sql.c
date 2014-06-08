@@ -11,6 +11,7 @@ const char * db_create_entities_table_sql(void) {
         "CREATE TABLE entities ("
         "    id         INTEGER         NOT NULL AUTO_INCREMENT,"
         "    name       VARCHAR(100)    NOT NULL,"
+        "    shortname  VARCHAR(10)     NOT NULL,"
         "    currency   CHAR(30)        NOT NULL DEFAULT 'USD',"
         "    parent     INT             NOT NULL,"
         "    aggregate  BOOLEAN         NOT NULL DEFAULT FALSE,"
