@@ -229,6 +229,18 @@ char ds_str_char_at_index(ds_str str, const size_t index);
 bool ds_str_is_empty(ds_str str);
 
 /*!
+ * \brief           Checks is a string contains only alphanumeric characters.
+ * \details         The string must contain *some* alphanumeric characters to
+ * check `true`, i.e. the string must be non-empty. Thus it can be used to
+ * check that a string does indeed contain content, and that that content
+ * is solely alphanumeric.
+ * \param str       The string.
+ * \returns         `true` if the string contains only alphanumeric characters,
+ * `false` otherwise.
+ */
+bool ds_str_is_alnum(ds_str str);
+
+/*!
  * \brief           Clears (empties) a string.
  * \param str       The string.
  */

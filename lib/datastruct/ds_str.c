@@ -333,6 +333,21 @@ bool ds_str_is_empty(ds_str str) {
     return str->length == 0;
 }
 
+bool ds_str_is_alnum(ds_str str) {
+    if ( ds_str_is_empty(str) ) {
+        return false;
+    }
+
+    bool result = true;
+    for ( size_t i = 0; i < str->length; ++i ) {
+        if ( !isalnum(str->data[i]) ) {
+            result = false;
+            break;
+        }
+    }
+    return result;
+}
+
 void ds_str_clear(ds_str str) {
     str->data[0] = '\0';
     str->length = 0;
@@ -342,11 +357,15 @@ bool ds_str_intval(ds_str str, const int base, int * value) {
     char * endptr;
     const long n = strtol(str->data, &endptr, base);
     if ( *endptr ) {
-        *value = 0;
+        if ( value ) {
+            *value = 0;
+        }
         return false;
     }
     else {
-        *value = (int) n;
+        if ( value ) {
+            *value = (int) n;
+        }
         return true;
     }
 }
@@ -355,11 +374,15 @@ bool ds_str_doubleval(ds_str str, double * value) {
     char * endptr;
     const double n = strtod(str->data, &endptr);
     if ( *endptr ) {
-        *value = 0;
+        if ( value ) {
+            *value = 0;
+        }
         return false;
     }
     else {
-        *value = n;
+        if ( value ) {
+            *value = n;
+        }
         return true;
     }
 }
@@ -468,7 +491,7 @@ static bool change_capacity_if_needed(ds_str str,
         return change_capacity(str, required_capacity);
     }
 
-    return false;
+    return true;
 }
 
 static void truncate_if_needed(ds_str str) {

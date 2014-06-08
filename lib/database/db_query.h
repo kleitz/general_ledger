@@ -19,7 +19,7 @@
  * \returns         `true` if the query was successfully executed,
  * `false` otherwise.
  */
-bool db_execute_query(const char * query);
+bool db_execute_query(ds_str query);
 
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_QUERY_H  */
 

@@ -13,6 +13,8 @@
 #ifndef PG_GENERAL_LEDGER_CONFIG_FILE_READ_H
 #define PG_GENERAL_LEDGER_CONFIG_FILE_READ_H
 
+#include <stdbool.h>
+
 #include "datastruct/ds_str.h"
 
 /*!  Return status for success  */
@@ -23,6 +25,12 @@
 
 /*!  Return status when configuration file is improperly formed  */
 #define CONFIG_FILE_MALFORMED_FILE 2
+
+/*!
+ * \brief           Initializes configuration data.
+ * \returns         `true` on success, `false` on failure.
+ */
+bool config_init(void);
 
 /*!
  * \brief           Reads a configuration file and stores the key-value pairs.
@@ -39,7 +47,7 @@ int config_file_read(const char * filename);
  * prior to calling this function. This function need not be called if
  * `config_file_read()` returned an error.
  */
-void config_file_free(void);
+void config_free(void);
 
 /*!
  * \brief           Returns the value associated with a key.
@@ -48,7 +56,23 @@ void config_file_free(void);
  * was not present in the configuration file. The caller should not modify
  * the string to which the pointer points.
  */
-ds_str config_file_value(ds_str key);
+ds_str config_value_get(ds_str key);
+
+/*!
+ * \brief           Returns the value associated with a C-style string key.
+ * \param key       The specified key.
+ * \returns         A pointer to the associated value, or `NULL` if the key
+ * was not present in the configuration file. The caller should not modify
+ * the string to which the pointer points.
+ */
+ds_str config_value_get_cstr(const char * key);
+
+/*!
+ * \brief           Sets a key-value in the configuration structure.
+ * \param key       The key.
+ * \param value     The value.
+ */
+void config_value_set(ds_str key, ds_str value);
 
 #endif      /*  PG_GENERAL_LEDGER_CONFIG_FILE_READ_H  */
 

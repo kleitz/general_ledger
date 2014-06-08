@@ -26,6 +26,11 @@
 /*!  File scope variable for the hash map  */
 static ds_map_str config_map = NULL;
 
+bool config_init(void) {
+    config_map = ds_map_str_init(CONFIG_MAP_SIZE);
+    return config_map ? true : false;
+}
+
 int config_file_read(const char * filename) {
     FILE * config_file = fopen(filename, "r");
     if ( !config_file ) {
@@ -34,7 +39,6 @@ int config_file_read(const char * filename) {
     }
 
     int retval = CONFIG_FILE_OK;
-    config_map = ds_map_str_init(CONFIG_MAP_SIZE);
 
     ds_str buffer = ds_str_create("");
     while ( ds_str_getline(buffer, MAX_BUFFER_SIZE, config_file) ) {
@@ -48,7 +52,6 @@ int config_file_read(const char * filename) {
 
         if ( !key || !value ) {
             retval = CONFIG_FILE_MALFORMED_FILE;
-            config_file_free();
             break;
         }
 
@@ -65,11 +68,31 @@ int config_file_read(const char * filename) {
     return retval;
 }
 
-ds_str config_file_value(ds_str key) {
+ds_str config_value_get(ds_str key) {
     return config_map ? ds_map_str_get_value(config_map, key) : NULL;
 }
 
-void config_file_free(void) {
+ds_str config_value_get_cstr(const char * key) {
+    if ( !config_map ) {
+        return NULL;
+    }
+
+    ds_str skey = ds_str_create(key);
+    if ( !skey ) {
+        return NULL;
+    }
+
+    ds_str value = ds_map_str_get_value(config_map, skey);
+    ds_str_destroy(skey);
+
+    return value;
+}
+
+void config_value_set(ds_str key, ds_str value) {
+    ds_map_str_insert(config_map, key, value);
+}
+
+void config_free(void) {
     if ( config_map ) {
         ds_map_str_destroy(config_map);
         config_map = NULL;

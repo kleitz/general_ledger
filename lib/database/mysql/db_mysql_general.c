@@ -70,11 +70,11 @@ void db_close(void) {
     conn_mss = NULL;
 }
 
-bool db_execute_query(const char * query) {
+bool db_execute_query(ds_str query) {
     bool ret_val = false;
 
     if ( conn_mss ) {
-        int status = mysql_query(conn_mss, query);
+        int status = mysql_query(conn_mss, ds_str_cstr(query));
         if ( status ) {
             db_error_msg("Query unsuccessful", conn_mss);
         }
@@ -90,9 +90,9 @@ bool db_execute_query(const char * query) {
     return ret_val;
 }
 
-ds_recordset db_create_recordset_from_query(const char * query) {
+ds_recordset db_create_recordset_from_query(ds_str query) {
     if ( conn_mss ) {
-        int status = mysql_query(conn_mss, query);
+        int status = mysql_query(conn_mss, ds_str_cstr(query));
         if ( status ) {
             db_error_msg("Query unsuccessful", conn_mss);
             return NULL;

@@ -17,7 +17,7 @@ const char * db_current_trial_balance_report_sql(void) {
         "    ON a.num = l.account"
         "  INNER JOIN jes AS j"
         "    ON l.je = j.id"
-        "  WHERE j.entity = 1"
+        "  WHERE j.entity = %s"
         "  GROUP BY a.num";
     return query;
 }

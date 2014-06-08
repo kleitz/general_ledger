@@ -15,6 +15,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <getopt.h>
 #include "config.h"
 #include "file_ops/file_ops.h"
@@ -35,16 +36,6 @@ struct params *params_init(void) {
         new_params->database = NULL;
         new_params->username = NULL;
         new_params->password = NULL;
-        new_params->help = false;
-        new_params->create = false;
-        new_params->delete_data = false;
-        new_params->sample = false;
-        new_params->version = false;
-        new_params->list_users = false;
-        new_params->list_entities = false;
-        new_params->list_nomaccts = false;
-        new_params->list_jes = false;
-        new_params->current_tb = false;
     } else {
         gl_log_msg("Couldn't allocate memory for parameters.");
     }
@@ -82,8 +73,6 @@ bool get_configuration(struct params * params) {
             !params->database || !params->username) {
             ret_val = false;
         }
-
-        config_file_free();
     }
 
     return ret_val;
@@ -100,8 +89,13 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         CMDLINE_LISTENTITIES,
         CMDLINE_LISTNOMACCTS,
         CMDLINE_LISTJES,
+        CMDLINE_LISTJELINES,
         CMDLINE_CURRENTTB,
+        CMDLINE_ENTITY,
     };
+
+    /*  Temporarily disable warning  */
+    (void)params;
 
     static struct option long_options[] = {
         {"help", no_argument, NULL, CMDLINE_HELP},
@@ -113,69 +107,127 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         {"listentities", no_argument, NULL, CMDLINE_LISTENTITIES},
         {"listnomaccts", no_argument, NULL, CMDLINE_LISTNOMACCTS},
         {"listjes", no_argument, NULL, CMDLINE_LISTJES},
+        {"listjelines", no_argument, NULL, CMDLINE_LISTJELINES},
         {"currenttb", no_argument, NULL, CMDLINE_CURRENTTB},
+        {"entity", required_argument, NULL, CMDLINE_ENTITY},
         {NULL, 0, NULL, 0}
     };
 
     bool ret_val = true;
-    int opt;
+    int copt;
+    ds_str key = ds_str_create("");
+    ds_str value = ds_str_create("");
 
-    while ((opt = getopt_long(argc, argv, "hvcdsunj",
+    while ((copt = getopt_long(argc, argv, "hvcdsunj",
                               long_options, NULL)) != -1) {
-        switch ( opt ) {
+        switch ( copt ) {
             case 'h':
             case CMDLINE_HELP:
-                params->help = true;
+                assert(ds_str_assign_cstr(key, "help"));
+                config_value_set(key, value);
                 break;
 
             case 'v':
             case CMDLINE_VERSION:
-                params->version = true;
+                assert(ds_str_assign_cstr(key, "version"));
+                config_value_set(key, value);
                 break;
 
             case 'c':
             case CMDLINE_CREATE:
-                params->create = true;
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "create"));
+                config_value_set(key, value);
                 break;
 
             case 'd':
             case CMDLINE_DELETE:
-                params->delete_data = true;
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "delete"));
+                config_value_set(key, value);
                 break;
 
             case 's':
             case CMDLINE_SAMPLE:
-                params->sample = true;
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "loadsample"));
+                config_value_set(key, value);
                 break;
 
             case 'u':
             case CMDLINE_LISTUSERS:
-                params->list_users = true;
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "report"));
+                assert(ds_str_assign_cstr(value, "listusers"));
+                config_value_set(key, value);
                 break;
 
             case 'e':
             case CMDLINE_LISTENTITIES:
-                params->list_entities = true;
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "report"));
+                assert(ds_str_assign_cstr(value, "listentities"));
+                config_value_set(key, value);
                 break;
 
             case 'n':
             case CMDLINE_LISTNOMACCTS:
-                params->list_nomaccts = true;
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "report"));
+                assert(ds_str_assign_cstr(value, "listnomaccts"));
+                config_value_set(key, value);
                 break;
 
             case 'j':
             case CMDLINE_LISTJES:
-                params->list_jes = true;
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "report"));
+                assert(ds_str_assign_cstr(value, "listjes"));
+                config_value_set(key, value);
+                break;
+
+            case CMDLINE_LISTJELINES:
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "report"));
+                assert(ds_str_assign_cstr(value, "listjelines"));
+                config_value_set(key, value);
                 break;
 
             case CMDLINE_CURRENTTB:
-                params->current_tb = true;
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "report"));
+                assert(ds_str_assign_cstr(value, "currenttb"));
+                config_value_set(key, value);
+                break;
+
+            case CMDLINE_ENTITY:
+                assert(ds_str_assign_cstr(key, "entity"));
+                assert(ds_str_assign_cstr(value, optarg));
+                if ( ds_str_intval(value, 10, NULL) ) {
+                    config_value_set(key, value);
+                }
+                else {
+                    gl_log_msg("Invalid entity number: %s", ds_str_cstr(value));
+                    ret_val = false;
+                }
                 break;
 
             default:
                 ret_val = false;
         }
     }
+
+    ds_str_destroy(key);
+    ds_str_destroy(value);
 
     return ret_val;
 }
@@ -184,7 +236,7 @@ static ds_str get_param_from_config(const char * key) {
     ds_str value;
 
     ds_str s_key = ds_str_create(key);
-    if ( !(value = config_file_value(s_key)) ) {
+    if ( !(value = config_value_get(s_key)) ) {
         gl_log_msg("Name of %s not specified in configuration file.", key);
     }
     ds_str_destroy(s_key);

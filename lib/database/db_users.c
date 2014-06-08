@@ -11,16 +11,34 @@
 
 bool db_create_users_table(void) {
     gl_log_msg("Creating users table...");
-    return db_execute_query(db_create_users_table_sql());
+    bool status = false;
+    ds_str query = ds_str_create(db_create_users_table_sql());
+    if ( query ) {
+        status = db_execute_query(query);
+        ds_str_destroy(query);
+    }
+    return status;
 }
 
 bool db_drop_users_table(void) {
     gl_log_msg("Dropping users table...");
-    return db_execute_query(db_drop_users_table_sql());
+    bool status = false;
+    ds_str query = ds_str_create(db_drop_users_table_sql());
+    if ( query ) {
+        status = db_execute_query(query);
+        ds_str_destroy(query);
+    }
+    return status;
 }
 
 ds_str db_list_users_report(void) {
     gl_log_msg("Creating 'list users' report...");
-    return db_create_report_from_query(db_list_users_report_sql());
+    ds_str report = NULL;
+    ds_str query = ds_str_create(db_list_users_report_sql());
+    if ( query ) {
+        report = db_create_report_from_query(query);
+        ds_str_destroy(query);
+    }
+    return report;
 }
 

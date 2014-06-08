@@ -53,7 +53,7 @@ static bool db_add_sample_data(const char * table, const char * filename) {
 
     ds_str query;
     while ( (query = ds_recordset_get_next_insert_query(data, table)) ) {
-        ret_val = db_execute_query(ds_str_cstr(query));
+        ret_val = db_execute_query(query);
         ds_str_destroy(query);
 
         if ( !ret_val ) {

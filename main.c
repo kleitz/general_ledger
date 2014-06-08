@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "gl_general/gl_general.h"
 #include "database/database.h"
 #include "config.h"
@@ -61,23 +62,22 @@ int main(int argc, char ** argv) {
     } 
 
     gl_set_logging(true);
+    config_init();
 
     struct params * params = params_init();
     bool status = get_cmdline_options(argc, argv, params);
+    ds_str value;
 
     if ( !status ) {
         print_usage_message(argv[0]);
     }
-    else if ( params->help ) {
+    else if ( config_value_get_cstr("help") ) {
         print_help_message(argv[0]);
     }
-    else if ( params->version ) {
+    else if ( config_value_get_cstr("version") ) {
         print_version_message(argv[0]);
     }
-    else if ( params->create || params->list_users ||
-              params->delete_data || params->sample ||
-              params->list_entities || params->list_nomaccts ||
-              params->list_jes || params->current_tb ) {
+    else if ( config_value_get_cstr("login") ) {
         if ( !get_configuration(params) ) {
             gl_log_msg("Couldn't get parameters.");
         }
@@ -89,39 +89,47 @@ int main(int argc, char ** argv) {
                            ds_str_cstr(params->username),
                            ds_str_cstr(params->password));
 
-                if ( params->create ) {
+                if ( config_value_get_cstr("create") ) {
                     db_create_database_structure();
                 }
-                else if ( params->delete_data ) {
+                else if ( config_value_get_cstr("delete") ) {
                     db_delete_database_structure();
                 }
-                else if ( params->sample ) {
+                else if ( config_value_get_cstr("loadsample") ) {
                     db_load_sample_data();
                 }
-                else if ( params->list_users ) {
-                    ds_str report = db_list_users_report();
-                    printf("%s", ds_str_cstr(report));
-                    ds_str_destroy(report);
-                }
-                else if ( params->list_entities ) {
-                    ds_str report = db_list_entities_report();
-                    printf("%s", ds_str_cstr(report));
-                    ds_str_destroy(report);
-                }
-                else if ( params->list_nomaccts ) {
-                    ds_str report = db_list_nomaccts_report();
-                    printf("%s", ds_str_cstr(report));
-                    ds_str_destroy(report);
-                }
-                else if ( params->list_jes ) {
-                    ds_str report = db_list_jes_report();
-                    printf("%s", ds_str_cstr(report));
-                    ds_str_destroy(report);
-                }
-                else if ( params->current_tb ) {
-                    ds_str report = db_current_trial_balance_report();
-                    printf("%s", ds_str_cstr(report));
-                    ds_str_destroy(report);
+                else if ( (value = config_value_get_cstr("report")) ) {
+                    ds_str report = NULL;
+
+                    if ( !ds_str_compare_cstr(value, "listusers") ) {
+                        report = db_list_users_report();
+                    }
+                    else if ( !ds_str_compare_cstr(value, "listentities") ) {
+                        report = db_list_entities_report();
+                    }
+                    else if ( !ds_str_compare_cstr(value, "listjes") ) {
+                        report = db_list_jes_report();
+                    }
+                    else if ( !ds_str_compare_cstr(value, "listjelines") ) {
+                        report = db_list_jelines_report();
+                    }
+                    else if ( !ds_str_compare_cstr(value, "currenttb") ) {
+                        ds_str entity = config_value_get_cstr("entity");
+                        if ( entity ) {
+                            report = db_current_trial_balance_report(entity);
+                        }
+                        else {
+                            gl_log_msg("Entity not specified.");
+                        }
+                    }
+
+                    if ( report ) {
+                        printf("%s", ds_str_cstr(report));
+                        ds_str_destroy(report);
+                    }
+                    else {
+                        gl_log_msg("Unrecognized report.");
+                    }
                 }
 
                 db_close();
@@ -136,6 +144,7 @@ int main(int argc, char ** argv) {
     }
 
     params_free(params);
+    config_free();
     gl_set_logging(false);
 
     return EXIT_SUCCESS;
@@ -167,9 +176,13 @@ void print_help_message(char * progname) {
     printf("  --version         Display version information\n");
     printf("  --create          Create database structure\n");
     printf("  --delete          Delete database structure\n");
+    printf("  --entity <entity> Specifies an entity\n");
     printf("  --loadsample      Load sample data\n");
     printf("  --listusers       Show a list of users\n");
     printf("  --listentities    Show a list of entities\n");
+    printf("  --listjes         Show a list of journal entries\n");
+    printf("  --listjelines     Show a list of journal entry lines\n");
+    printf("  --currenttb       Show a current trial balance for <entity>\n");
 }
 
 void print_version_message(char * progname) {
