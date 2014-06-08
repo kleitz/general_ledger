@@ -11,6 +11,8 @@
 
 #include "gl_errors.h"
 #include "gl_logging.h"
+#include "gl_login.h"
+#include "gl_config.h"
 
 #endif      /*  PG_GENERAL_LEDGER_GL_GENERAL_H  */
 

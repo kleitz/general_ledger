@@ -18,12 +18,6 @@
 #include "file_ops/file_ops.h"
 
 /*!
- * \brief           Logs a user in and retrieves the password.
- * \returns         The password.
- */
-ds_str login(void);
-
-/*!
  * \brief           Prints a program usage message.
  * \param progname  The program name.
  */
@@ -78,7 +72,7 @@ int main(int argc, char ** argv) {
         print_version_message(argv[0]);
     }
     else if ( config_value_get_cstr("login") ) {
-        if ( !get_configuration(params) ) {
+        if ( !get_configuration(params, "test_conf.conf") ) {
             gl_log_msg("Couldn't get parameters.");
         }
         else {
@@ -154,21 +148,6 @@ int main(int argc, char ** argv) {
     gl_set_logging(false);
 
     return EXIT_SUCCESS;
-}
-
-ds_str login(void) {
-    ds_str passwd = ds_str_create("");
-
-    printf("Enter password (*WILL BE VISIBLE*): ");
-    fflush(stdout);
-
-    if ( !ds_str_getline(passwd, 80, stdin) ) {
-        ds_str_destroy(passwd);
-        gl_log_msg("Couldn't get password.");
-        return NULL;
-    }
-
-    return passwd;
 }
 
 void print_usage_message(char * progname) {
