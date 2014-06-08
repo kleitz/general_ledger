@@ -104,5 +104,12 @@ const char * db_drop_jelines_table_sql(void);
  */
 const char * db_list_jelines_report_sql(void);
 
+/*!
+ * \brief           Returns the SQL query to run the "current TB"
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_current_trial_balance_report_sql(void);
+
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_SQL_H  */
 

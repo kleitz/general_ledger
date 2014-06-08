@@ -44,6 +44,7 @@ struct params *params_init(void) {
         new_params->list_entities = false;
         new_params->list_nomaccts = false;
         new_params->list_jes = false;
+        new_params->current_tb = false;
     } else {
         gl_log_msg("Couldn't allocate memory for parameters.");
     }
@@ -99,6 +100,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         CMDLINE_LISTENTITIES,
         CMDLINE_LISTNOMACCTS,
         CMDLINE_LISTJES,
+        CMDLINE_CURRENTTB,
     };
 
     static struct option long_options[] = {
@@ -111,6 +113,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         {"listentities", no_argument, NULL, CMDLINE_LISTENTITIES},
         {"listnomaccts", no_argument, NULL, CMDLINE_LISTNOMACCTS},
         {"listjes", no_argument, NULL, CMDLINE_LISTJES},
+        {"currenttb", no_argument, NULL, CMDLINE_CURRENTTB},
         {NULL, 0, NULL, 0}
     };
 
@@ -163,6 +166,10 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
             case 'j':
             case CMDLINE_LISTJES:
                 params->list_jes = true;
+                break;
+
+            case CMDLINE_CURRENTTB:
+                params->current_tb = true;
                 break;
 
             default:

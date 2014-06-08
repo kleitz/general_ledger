@@ -26,5 +26,11 @@ ds_str db_create_report_from_query(const char * query);
  */
 ds_recordset db_create_recordset_from_query(const char * query);
 
+/*!
+ * \brief           Runs the current trial balance report.
+ * \returns         The report.
+ */
+ds_str db_current_trial_balance_report(void);
+
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_REPORTING_H  */
 

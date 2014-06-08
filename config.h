@@ -29,6 +29,7 @@ struct params {
     bool list_entities;     /*!<  List entities option set          */
     bool list_nomaccts;     /*!<  List nominal accounts option set  */
     bool list_jes;          /*!<  List journal entries option set   */
+    bool current_tb;        /*!<  Current trial balance option set  */
 };
 
 /*!
