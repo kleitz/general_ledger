@@ -1,6 +1,7 @@
 /*!
- * \file            config.c
- * \brief           Implementation of program configuration functionality.
+ * \file            gl_reports_config.c
+ * \brief           Implementation of GL reports program configuration
+ * functionality.
  * \details         Gets program configuration options from the command line
  * and/or a configuration file.
  * \author          Paul Griffiths
@@ -13,7 +14,7 @@
 
 #include <assert.h>
 #include <getopt.h>
-#include "config.h"
+#include "gl_reports_config.h"
 #include "file_ops/file_ops.h"
 #include "datastruct/data_structures.h"
 #include "gl_general/gl_general.h"
@@ -22,9 +23,6 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
     enum opts {
         CMDLINE_HELP = 1,
         CMDLINE_VERSION,
-        CMDLINE_CREATE,
-        CMDLINE_DELETE,
-        CMDLINE_SAMPLE,
         CMDLINE_LISTUSERS,
         CMDLINE_LISTENTITIES,
         CMDLINE_LISTNOMACCTS,
@@ -42,9 +40,6 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
     static struct option long_options[] = {
         {"help", no_argument, NULL, CMDLINE_HELP},
         {"version", no_argument, NULL, CMDLINE_VERSION},
-        {"create", no_argument, NULL, CMDLINE_CREATE},
-        {"delete", no_argument, NULL, CMDLINE_DELETE},
-        {"loadsample", no_argument, NULL, CMDLINE_SAMPLE},
         {"listusers", no_argument, NULL, CMDLINE_LISTUSERS},
         {"listentities", no_argument, NULL, CMDLINE_LISTENTITIES},
         {"listnomaccts", no_argument, NULL, CMDLINE_LISTNOMACCTS},
@@ -62,7 +57,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
     ds_str key = ds_str_create("");
     ds_str value = ds_str_create("");
 
-    while ((copt = getopt_long(argc, argv, "hvcdsunj",
+    while ((copt = getopt_long(argc, argv, "hvunje",
                               long_options, NULL)) != -1) {
         switch ( copt ) {
             case 'h':
@@ -74,30 +69,6 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
             case 'v':
             case CMDLINE_VERSION:
                 assert(ds_str_assign_cstr(key, "version"));
-                config_value_set(key, value);
-                break;
-
-            case 'c':
-            case CMDLINE_CREATE:
-                assert(ds_str_assign_cstr(key, "login"));
-                config_value_set(key, value);
-                assert(ds_str_assign_cstr(key, "create"));
-                config_value_set(key, value);
-                break;
-
-            case 'd':
-            case CMDLINE_DELETE:
-                assert(ds_str_assign_cstr(key, "login"));
-                config_value_set(key, value);
-                assert(ds_str_assign_cstr(key, "delete"));
-                config_value_set(key, value);
-                break;
-
-            case 's':
-            case CMDLINE_SAMPLE:
-                assert(ds_str_assign_cstr(key, "login"));
-                config_value_set(key, value);
-                assert(ds_str_assign_cstr(key, "loadsample"));
                 config_value_set(key, value);
                 break;
 

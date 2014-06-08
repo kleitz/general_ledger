@@ -11,12 +11,14 @@
 # =================
 
 # Files
-program      := general_ledger
-sources      := $(wildcard *.c)
-libraries    :=
-main_objects := $(subst .c,.o,$(sources))
-objects       = $(subst .c,.o,$(sources))
-depends       = $(subst .c,.d,$(sources))
+db_program	 	:= gl_db
+reports_program	:= gl_reports
+sources      	:= $(wildcard *.c)
+libraries    	:=
+objects       	 = $(subst .c,.o,$(sources))
+depends       	 = $(subst .c,.d,$(sources))
+db_objects   	:=
+reports_objects :=
 
 # Compile options
 database     := mysql
@@ -32,6 +34,7 @@ LDFLAGS :=
 
 # Clean files and globs
 CLNGLOB=$(program) $(objects) $(libraries) $(depends)
+CLNGLOB+=$(db_program) $(reports_program)
 CLNGLOB+=*~ *.o *.gcov *.out *.gcda *.gcno
 
 
@@ -87,7 +90,7 @@ tags:
 
 # Main executable
 .PHONY: main
-main: $(program)
+main: $(db_program) $(reports_program)
 
 include lib/database/module.mk
 include lib/database/$(database)/module.mk
@@ -95,9 +98,17 @@ include lib/gl_general/module.mk
 include lib/file_ops/module.mk
 include lib/datastruct/module.mk
 
-$(program):	$(main_objects) $(libraries)
-	@echo "Building general_ledger..."
-	$(CC) -o $(program) $(main_objects) $(libraries) $(LDFLAGS)
+include progs/gl_db/module.mk
+include progs/gl_reports/module.mk
+
+$(db_program):	$(db_objects) $(libraries)
+	@echo "Building gl_db..."
+	$(CC) -o $@ $^ $(LDFLAGS)
+	@echo "Done."
+
+$(reports_program):	$(reports_objects) $(libraries)
+	@echo "Building gl_reports..."
+	$(CC) -o $@ $^ $(LDFLAGS)
 	@echo "Done."
 
 

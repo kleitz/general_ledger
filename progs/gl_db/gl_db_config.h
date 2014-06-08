@@ -1,6 +1,6 @@
 /*!
- * \file            config.h
- * \brief           Interface to program configuration functionality.
+ * \file            gl_db_config.h
+ * \brief           Interface to GL DB program configuration functionality.
  * \details         Gets program configuration options from the command line
  * and/or a configuration file.
  * \author          Paul Griffiths
@@ -8,8 +8,8 @@
  * of the GNU General Public License. <http://www.gnu.org/licenses/>
  */
 
-#ifndef PG_GENERAL_LEDGER_CONFIG_H
-#define PG_GENERAL_LEDGER_CONFIG_H
+#ifndef PG_GENERAL_LEDGER_GL_DB_CONFIG_H
+#define PG_GENERAL_LEDGER_GL_DB_CONFIG_H
 
 #include <stdbool.h>
 #include "datastruct/ds_str.h"
@@ -25,5 +25,5 @@
  */
 bool get_cmdline_options(int argc, char ** argv, struct params * params);
 
-#endif      /*  PG_GENERAL_LEDGER_CONFIG_H  */
+#endif      /*  PG_GENERAL_LEDGER_GL_DB_CONFIG_H  */
 
