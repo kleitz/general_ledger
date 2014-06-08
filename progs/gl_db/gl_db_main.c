@@ -71,7 +71,12 @@ int main(int argc, char ** argv) {
                            ds_str_cstr(params->username),
                            ds_str_cstr(params->password));
 
-                if ( config_value_get_cstr("create") ) {
+                if ( config_value_get_cstr("init") ) {
+                    db_delete_database_structure();
+                    db_create_database_structure();
+                    db_load_sample_data();
+                }
+                else if ( config_value_get_cstr("create") ) {
                     db_create_database_structure();
                 }
                 else if ( config_value_get_cstr("delete") ) {
@@ -115,6 +120,9 @@ void print_help_message(const char * progname) {
     printf("  --create          Create database structure\n");
     printf("  --delete          Delete database structure\n");
     printf("  --loadsample      Load sample data\n");
+    printf("  --init            Combines --create, --delete, and");
+    printf(" --loadsample\n");
+    printf("                    in one operation.\n");
 }
 
 void print_version_message(const char * progname) {

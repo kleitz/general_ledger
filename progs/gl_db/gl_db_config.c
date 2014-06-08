@@ -22,6 +22,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
     enum opts {
         CMDLINE_HELP = 1,
         CMDLINE_VERSION,
+        CMDLINE_INIT,
         CMDLINE_CREATE,
         CMDLINE_DELETE,
         CMDLINE_SAMPLE,
@@ -33,6 +34,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
     static struct option long_options[] = {
         {"help", no_argument, NULL, CMDLINE_HELP},
         {"version", no_argument, NULL, CMDLINE_VERSION},
+        {"init", no_argument, NULL, CMDLINE_INIT},
         {"create", no_argument, NULL, CMDLINE_CREATE},
         {"delete", no_argument, NULL, CMDLINE_DELETE},
         {"loadsample", no_argument, NULL, CMDLINE_SAMPLE},
@@ -44,7 +46,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
     ds_str key = ds_str_create("");
     ds_str value = ds_str_create("");
 
-    while ((copt = getopt_long(argc, argv, "hvcds",
+    while ((copt = getopt_long(argc, argv, "hvicds",
                               long_options, NULL)) != -1) {
         switch ( copt ) {
             case 'h':
@@ -56,6 +58,14 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
             case 'v':
             case CMDLINE_VERSION:
                 assert(ds_str_assign_cstr(key, "version"));
+                config_value_set(key, value);
+                break;
+
+            case 'i':
+            case CMDLINE_INIT:
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "init"));
                 config_value_set(key, value);
                 break;
 
