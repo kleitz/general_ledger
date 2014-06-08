@@ -28,6 +28,7 @@ bool db_load_sample_data(void) {
     static const char * sample_data[][2] = {
         {"users", "sample_data/users"},
         {"entities", "sample_data/entities"},
+        {"jesrcs", "sample_data/jesrcs"},
         {"nomaccts", "sample_data/nomaccts"},
         {"jes", "sample_data/jes"},
         {"jelines", "sample_data/jelines"},

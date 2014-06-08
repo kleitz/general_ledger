@@ -10,6 +10,7 @@ const char * db_create_jes_table_sql(void) {
     static const char * query = 
         "CREATE TABLE jes ("
         "    id         INTEGER         NOT NULL AUTO_INCREMENT,"
+        "    source     VARCHAR(100)    NOT NULL,"
         "    entity     INTEGER         NOT NULL,"
         "    memo       VARCHAR(100)    NOT NULL,"
         "    posted     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,"
@@ -17,7 +18,10 @@ const char * db_create_jes_table_sql(void) {
         "    PRIMARY KEY (id),"
         "  CONSTRAINT jes_entity_fk"
         "    FOREIGN KEY (entity)"
-        "    REFERENCES entities(id)"
+        "    REFERENCES entities(id),"
+        "  CONSTRAINT jes_source_fk"
+        "    FOREIGN KEY (source)"
+        "    REFERENCES jesrcs(name)"
         ");";
     return query;
 }

@@ -13,7 +13,7 @@
 #include "datastruct/data_structures.h"
 
 /*!
- * \brief           Creates the nominal accounts table in the database.
+ * \brief           Creates the journal entries table in the database.
  * \returns         `true` on success, `false` on failure.
  */
 bool db_create_jes_table(void);

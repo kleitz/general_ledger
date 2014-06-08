@@ -1,0 +1,5 @@
+name:description
+string:string
+SAMPLE:Loaded from sample data
+MANUAL:Manual entry
+CLOSING:Automatic closing entry

@@ -113,6 +113,9 @@ int main(int argc, char ** argv) {
                     else if ( !ds_str_compare_cstr(value, "listjelines") ) {
                         report = db_list_jelines_report();
                     }
+                    else if ( !ds_str_compare_cstr(value, "listjesrcs") ) {
+                        report = db_list_jesrcs_report();
+                    }
                     else if ( !ds_str_compare_cstr(value, "currenttb") ) {
                         ds_str entity = config_value_get_cstr("entity");
                         if ( entity ) {

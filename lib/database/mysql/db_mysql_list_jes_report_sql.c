@@ -10,6 +10,7 @@ const char * db_list_jes_report_sql(void) {
     static const char * query = 
         "SELECT"
         "  j.id AS 'JE',"
+        "  j.source AS 'Source',"
         "  e.shortname AS 'Entity',"
         "  j.memo AS 'Memo',"
         "  j.posted AS 'Posting Time'"
