@@ -66,6 +66,7 @@ void db_close(void) {
         gl_error_quit("Closing connection which is not open.");
     }
     mysql_close(conn_mss);
+    mysql_library_end();
     main_mss = NULL;
     conn_mss = NULL;
 }
