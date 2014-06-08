@@ -8,6 +8,20 @@ What is it?
 open-source client-server general ledger system. Development is still at an
 early stage.
 
+Planned near-term features include:
+
+* Multi-user environment with finely-grained access rights
+* Separation of create and post rights
+* Multiple entities and consolidation
+* Full period-end and year-end close functionality
+* Client applications
+
+Planned long-term features include:
+
+* Support for all major database platforms
+* Separate integrated modules, e.g. cash, fixed assets, accounts payable and
+receivable
+
 **general_ledger** is a working title.
 
 Who maintains it?
