@@ -17,6 +17,8 @@ bool db_create_database_structure(void) {
         db_create_nomaccts_table,
         db_create_jes_table,
         db_create_jelines_table,
+        db_create_current_trial_balance_view,
+        db_create_check_total_view,
         NULL
     };
 
@@ -30,6 +32,8 @@ bool db_create_database_structure(void) {
 
 bool db_delete_database_structure(void) {
     static bool (*dropfunc[])(void) = {
+        db_drop_check_total_view,
+        db_drop_current_trial_balance_view,
         db_drop_jelines_table,
         db_drop_jes_table,
         db_drop_nomaccts_table,

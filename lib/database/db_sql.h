@@ -112,6 +112,13 @@ const char * db_list_jelines_report_sql(void);
 const char * db_current_trial_balance_report_sql(void);
 
 /*!
+ * \brief           Returns the SQL query to run the "current TB" by entity.
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_current_trial_balance_entity_report_sql(void);
+
+/*!
  * \brief           Returns the SQL query to create the JE sources table.
  * \returns         The SQL query.
  */
@@ -148,6 +155,44 @@ const char * db_drop_standingdata_table_sql(void);
  * \returns         The SQL query.
  */
 const char * db_show_standingdata_report_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to create the current TB view.
+ * \returns         The SQL query.
+ */
+const char * db_create_current_trial_balance_view_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to drop the current TB view.
+ * \returns         The SQL query.
+ */
+const char * db_drop_current_trial_balance_view_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to create the check total view.
+ * \returns         The SQL query.
+ */
+const char * db_create_check_total_view_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to drop the check total view.
+ * \returns         The SQL query.
+ */
+const char * db_drop_check_total_view_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to run the "check total"
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_check_total_report_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to run the "check total" by entity.
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_check_total_entity_report_sql(void);
 
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_SQL_H  */
 

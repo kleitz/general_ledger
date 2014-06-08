@@ -1,9 +1,9 @@
-source:entity:memo
-string:integer:string
-SAMPLE:1:Initial capital contribution
-SAMPLE:1:Investment in Luna
-SAMPLE:1:Investment in Jupiter
-SAMPLE:2:Initial capital contribution
-SAMPLE:2:Investment in Rocket
-SAMPLE:3:Initial capital contribution
-SAMPLE:4:Initial capital contribution
+user:source:year:period:entity:memo
+int:string:integer:integer:integer:string
+1:SAMPLE:2014:1:1:Initial capital contribution
+1:SAMPLE:2014:1:1:Investment in Luna
+1:SAMPLE:2014:1:1:Investment in Jupiter
+1:SAMPLE:2014:1:2:Initial capital contribution
+1:SAMPLE:2014:3:2:Investment in Rocket
+1:SAMPLE:2014:1:3:Initial capital contribution
+1:SAMPLE:2014:3:4:Initial capital contribution

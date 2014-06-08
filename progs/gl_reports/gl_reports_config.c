@@ -31,6 +31,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         CMDLINE_LISTJESRCS,
         CMDLINE_SHOWSTANDINGDATA,
         CMDLINE_CURRENTTB,
+        CMDLINE_CHECKTOTALS,
         CMDLINE_ENTITY,
     };
 
@@ -48,6 +49,7 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
         {"listjesrcs", no_argument, NULL, CMDLINE_LISTJESRCS},
         {"standingdata", no_argument, NULL, CMDLINE_SHOWSTANDINGDATA},
         {"currenttb", no_argument, NULL, CMDLINE_CURRENTTB},
+        {"checktotals", no_argument, NULL, CMDLINE_CHECKTOTALS},
         {"entity", required_argument, NULL, CMDLINE_ENTITY},
         {NULL, 0, NULL, 0}
     };
@@ -137,6 +139,14 @@ bool get_cmdline_options(int argc, char **argv, struct params *params) {
                 config_value_set(key, value);
                 assert(ds_str_assign_cstr(key, "report"));
                 assert(ds_str_assign_cstr(value, "currenttb"));
+                config_value_set(key, value);
+                break;
+
+            case CMDLINE_CHECKTOTALS:
+                assert(ds_str_assign_cstr(key, "login"));
+                config_value_set(key, value);
+                assert(ds_str_assign_cstr(key, "report"));
+                assert(ds_str_assign_cstr(value, "checktotal"));
                 config_value_set(key, value);
                 break;
 

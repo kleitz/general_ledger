@@ -22,6 +22,7 @@
 #include "db_jelines.h"
 #include "db_jesrcs.h"
 #include "db_standingdata.h"
+#include "db_currenttb.h"
 
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_H  */
 

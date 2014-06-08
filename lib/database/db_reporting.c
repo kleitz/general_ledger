@@ -16,12 +16,3 @@ ds_str db_create_report_from_query(ds_str query) {
     return report;
 }
 
-ds_str db_current_trial_balance_report(ds_str entity) {
-    gl_log_msg("Creating 'current trial balance' report...");
-    const char * cquery = db_current_trial_balance_report_sql();
-    ds_str query = ds_str_create_sprintf(cquery, ds_str_cstr(entity));
-    ds_str report = db_create_report_from_query(query);
-    ds_str_destroy(query);
-    return report;
-}
-

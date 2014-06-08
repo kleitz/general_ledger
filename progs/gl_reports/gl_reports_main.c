@@ -95,12 +95,11 @@ int main(int argc, char ** argv) {
                     }
                     else if ( !ds_str_compare_cstr(value, "currenttb") ) {
                         ds_str entity = config_value_get_cstr("entity");
-                        if ( entity ) {
-                            report = db_current_trial_balance_report(entity);
-                        }
-                        else {
-                            gl_log_msg("Entity not specified.");
-                        }
+                        report = db_current_trial_balance_report(entity);
+                    }
+                    else if ( !ds_str_compare_cstr(value, "checktotal") ) {
+                        ds_str entity = config_value_get_cstr("entity");
+                        report = db_check_total_report(entity);
                     }
 
                     if ( report ) {
@@ -150,7 +149,10 @@ void print_help_message(const char * progname) {
     printf("  --listjelines     Show a list of journal entry lines\n");
     printf("  --listjesrcs      Show a list of journal entry sources\n");
     printf("  --standingdata    Show the standing data\n");
-    printf("  --currenttb       Show a current trial balance for <entity>\n");
+    printf("  --currenttb       Show a current trial balance\n");
+    printf("                                   (optionally for <entity>)\n");
+    printf("  --checktotal      Show double entry check totals\n");
+    printf("                                   (optionally for <entity>)\n");
 }
 
 void print_version_message(const char * progname) {
