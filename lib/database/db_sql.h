@@ -85,5 +85,24 @@ const char * db_drop_nomaccts_table_sql(void);
  */
 const char * db_list_nomaccts_report_sql(void);
 
+/*!
+ * \brief           Returns the SQL query to create the JE lines table.
+ * \returns         The SQL query.
+ */
+const char * db_create_jelines_table_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to drop the JE lines table.
+ * \returns         The SQL query.
+ */
+const char * db_drop_jelines_table_sql(void);
+
+/*!
+ * \brief           Returns the SQL query to run the "list JE lines"
+ * report.
+ * \returns         The SQL query.
+ */
+const char * db_list_jelines_report_sql(void);
+
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_SQL_H  */
 

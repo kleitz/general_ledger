@@ -19,6 +19,7 @@
 #include "db_entities.h"
 #include "db_nomaccts.h"
 #include "db_jes.h"
+#include "db_jelines.h"
 
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_H  */
 

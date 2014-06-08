@@ -30,6 +30,7 @@ bool db_load_sample_data(void) {
         {"entities", "sample_data/entities"},
         {"nomaccts", "sample_data/nomaccts"},
         {"jes", "sample_data/jes"},
+        {"jelines", "sample_data/jelines"},
         {NULL, NULL}
     };
 

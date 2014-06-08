@@ -1,4 +1,5 @@
 entity:memo
+integer:string
 1:Initial capital contribution
 1:Investment in Luna
 1:Investment in Jupiter
