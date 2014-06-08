@@ -15,6 +15,7 @@ const char * db_create_entities_table_sql(void) {
         "    currency   CHAR(30)        NOT NULL DEFAULT 'USD',"
         "    parent     INT             NOT NULL,"
         "    aggregate  BOOLEAN         NOT NULL DEFAULT FALSE,"
+        "    enabled    BOOLEAN         NOT NULL DEFAULT TRUE,"
         "  CONSTRAINT entities_pk"
         "    PRIMARY KEY (id),"
         "  CONSTRAINT entities_parent_fk"
