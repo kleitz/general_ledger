@@ -4,8 +4,11 @@ general_ledger
 What is it?
 -----------
 
-**general_ledger** will be a fully-featured, open-source general ledger
-system.
+**general_ledger** will be a fully-featured, multi-user, multi-entity,
+open-source client-server general ledger system. Development is still at an
+early stage.
+
+**general_ledger** is a working title.
 
 Who maintains it?
 -----------------
