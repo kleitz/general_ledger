@@ -79,7 +79,6 @@ bool db_execute_query(ds_str query) {
             db_error_msg("Query unsuccessful", conn_mss);
         }
         else {
-            gl_log_msg("Query successful");
             ret_val = true;
         }
     }
