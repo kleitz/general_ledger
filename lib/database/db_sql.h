@@ -220,5 +220,11 @@ const char * db_all_jes_report_sql(void);
  */
 const char * db_all_jes_number_report_sql(void);
 
+/*!\
+ * \brief           Returns the SQL query to get an entity name from its ID.
+ * \returns         The SQL query.
+ */
+const char * db_get_entity_name_from_id_sql(void);
+
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_SQL_H  */
 

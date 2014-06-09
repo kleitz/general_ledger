@@ -30,5 +30,13 @@ bool db_drop_entities_table(void);
  */
 ds_str db_list_entities_report(void);
 
+/*!
+ * \brief           Returns an entity name from an ID.
+ * \param entity_id The entity ID.
+ * \returns         The string, containing an "Unknown entity" string if
+ * the ID is not found.
+ */
+ds_str db_get_entity_name_from_id(ds_str entity_id);
+
 #endif      /*  PG_GENERAL_LEDGER_DATABASE_DB_ENTITIES_H  */
 

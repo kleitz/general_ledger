@@ -29,7 +29,7 @@ ds_report ds_report_create(void) {
     }
 
 
-    new_report->headers = ds_list_create(true, ds_str_destructor);
+    new_report->headers = ds_list_create(true, ds_kvpair_destructor);
     if ( !new_report->headers ) {
         free(new_report);
         return NULL;
@@ -57,12 +57,32 @@ void ds_report_set_report_text(ds_report report, ds_str report_text) {
     report->report_text = report_text;
 }
 
+bool ds_report_add_header(ds_report report, ds_str name, ds_str value) {
+    ds_kvpair new_pair = ds_kvpair_create(name, value);
+    if ( !new_pair ) {
+        return false;
+    }
+
+    ds_list_append(report->headers, new_pair);
+    return true;
+}
+
 void ds_report_print_text_report(ds_report report, FILE * outfile) {
     fprintf(outfile, "%s\n", ds_str_cstr(report->title));
     for ( size_t i = 0; i < ds_str_length(report->title); ++i ) {
         printf("=");
     }
     printf("\n");
+
+    ds_kvpair pair;
+    for ( ds_list_seek_start(report->headers);
+          (pair = ds_list_get_next_data(report->headers));
+        ) {
+        fprintf(outfile, "%s: %s\n", ds_str_cstr(ds_kvpair_get_key(pair)),
+                                     ds_str_cstr(ds_kvpair_get_value(pair)));
+    }
+
+
     fprintf(outfile, "%s", ds_str_cstr(report->report_text));
 
     struct tm ct;

@@ -53,5 +53,14 @@ void ds_report_set_report_text(ds_report report, ds_str report_text);
  */
 void ds_report_print_text_report(ds_report report, FILE * outfile);
 
+/*!
+ * \brief           Adds a header to the report.
+ * \param report    The report.
+ * \param name      The name of the header.
+ * \param value     The value of the header.
+ * \returns         `true` on success, `false` otherwise.
+ */
+bool ds_report_add_header(ds_report report, ds_str name, ds_str value);
+
 #endif      /*  PG_GENERAL_LEDGER_DS_REPORT_H  */
 

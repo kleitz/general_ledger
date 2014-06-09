@@ -9,7 +9,7 @@
 
 const char * db_current_trial_balance_entity_report_sql(void) {
     static const char * query = 
-        "SELECT * FROM current_trial_balance"
+        "SELECT `A/C No.`, Description, Balance FROM current_trial_balance"
         "  WHERE Entity = %s";
     return query;
 }

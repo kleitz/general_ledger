@@ -125,6 +125,21 @@ int main(int argc, char ** argv) {
                                       db_current_trial_balance_report(entity));
                         ds_report_set_title(report,
                             ds_str_create("Current Trial Balance"));
+
+                        ds_str h_name = ds_str_create("Entity");
+                        ds_str h_value = db_get_entity_name_from_id(entity);
+                        /*
+                        if ( entity ) {
+                            h_value = ds_str_create_sprintf("[%s]",
+                                    ds_str_cstr(entity));
+                        }
+                        else {
+                            h_value = ds_str_create("All entities");
+                        }
+                        */
+                        ds_report_add_header(report, h_name, h_value);
+                        ds_str_destroy(h_name);
+                        ds_str_destroy(h_value);
                     }
                     else if ( !ds_str_compare_cstr(value, "checktotal") ) {
                         ds_str entity = config_value_get_cstr("entity");
