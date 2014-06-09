@@ -73,45 +73,80 @@ int main(int argc, char ** argv) {
                            ds_str_cstr(params->password));
 
                 if ( (value = config_value_get_cstr("report")) ) {
-                    ds_str report = NULL;
+                    ds_report report = ds_report_create();
+                    assert(report);
+                    bool no_report = false;
 
                     if ( !ds_str_compare_cstr(value, "listusers") ) {
-                        report = db_list_users_report();
+                        ds_report_set_report_text(report,
+                                                  db_list_users_report());
+                        ds_report_set_title(report,
+                                ds_str_create("Users List"));
                     }
                     else if ( !ds_str_compare_cstr(value, "listentities") ) {
-                        report = db_list_entities_report();
+                        ds_report_set_report_text(report,
+                                                  db_list_entities_report());
+                        ds_report_set_title(report,
+                                ds_str_create("Entities List"));
                     }
                     else if ( !ds_str_compare_cstr(value, "listnomaccts") ) {
-                        report = db_list_nomaccts_report();
+                        ds_report_set_report_text(report,
+                                                  db_list_nomaccts_report());
+                        ds_report_set_title(report,
+                                ds_str_create("Nominal Accounts List"));
                     }
                     else if ( !ds_str_compare_cstr(value, "listjes") ) {
-                        report = db_list_jes_report();
+                        ds_report_set_report_text(report,
+                                                  db_list_jes_report());
+                        ds_report_set_title(report,
+                                ds_str_create("Journal Entries Report"));
                     }
                     else if ( !ds_str_compare_cstr(value, "listjelines") ) {
-                        report = db_list_jelines_report();
+                        ds_report_set_report_text(report,
+                                                  db_list_jelines_report());
+                        ds_report_set_title(report,
+                            ds_str_create("Journal Entry Lines Report"));
                     }
                     else if ( !ds_str_compare_cstr(value, "listjesrcs") ) {
-                        report = db_list_jesrcs_report();
+                        ds_report_set_report_text(report,
+                                                  db_list_jesrcs_report());
+                        ds_report_set_title(report,
+                            ds_str_create("Journal Entry Sources Report"));
                     }
                     else if ( !ds_str_compare_cstr(value, "standingdata") ) {
-                        report = db_show_standingdata_report();
+                        ds_report_set_report_text(report,
+                                              db_show_standingdata_report());
+                        ds_report_set_title(report,
+                            ds_str_create("Standing Data Report"));
                     }
                     else if ( !ds_str_compare_cstr(value, "currenttb") ) {
                         ds_str entity = config_value_get_cstr("entity");
-                        report = db_current_trial_balance_report(entity);
+                        ds_report_set_report_text(report,
+                                      db_current_trial_balance_report(entity));
+                        ds_report_set_title(report,
+                            ds_str_create("Current Trial Balance"));
                     }
                     else if ( !ds_str_compare_cstr(value, "checktotal") ) {
                         ds_str entity = config_value_get_cstr("entity");
-                        report = db_check_total_report(entity);
+                        ds_report_set_report_text(report,
+                                      db_check_total_report(entity));
+                        ds_report_set_title(report,
+                            ds_str_create("Double Entry Check Total Report"));
                     }
                     else if ( !ds_str_compare_cstr(value, "entries") ) {
                         ds_str je_num = config_value_get_cstr("je_num");
-                        report = db_all_jes_report(je_num);
+                        ds_report_set_report_text(report,
+                                      db_all_jes_report(je_num));
+                        ds_report_set_title(report,
+                            ds_str_create("Detailed Journal Entry Report"));
+                    }
+                    else {
+                        no_report = true;
                     }
 
-                    if ( report ) {
-                        printf("%s", ds_str_cstr(report));
-                        ds_str_destroy(report);
+                    if ( !no_report ) {
+                        ds_report_print_text_report(report, stdout);
+                        ds_report_destroy(report);
                     }
                     else {
                         gl_log_msg("Unrecognized report.");

@@ -17,6 +17,7 @@
 #include "ds_fieldtypes.h"
 #include "ds_record.h"
 #include "ds_recordset.h"
+#include "ds_report.h"
 
 #endif      /*  PG_GENERAL_LEDGER_DATA_STRUCTURES_H  */
 
