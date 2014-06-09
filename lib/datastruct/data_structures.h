@@ -18,6 +18,7 @@
 #include "ds_record.h"
 #include "ds_recordset.h"
 #include "ds_report.h"
+#include "ds_kvpair.h"
 
 #endif      /*  PG_GENERAL_LEDGER_DATA_STRUCTURES_H  */
 
